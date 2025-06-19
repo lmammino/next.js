@@ -4,7 +4,7 @@ import { join } from 'path'
 import cheerio from 'cheerio'
 import webdriver from 'next-webdriver'
 import { NextInstance } from 'e2e-utils'
-import { check, fetchViaHTTP, retry } from 'next-test-utils'
+import { fetchViaHTTP, retry } from 'next-test-utils'
 import { createNext, FileRef } from 'e2e-utils'
 import escapeStringRegexp from 'escape-string-regexp'
 
@@ -37,7 +37,7 @@ describe('Middleware Rewrite', () => {
       })
 
       if (!(global as any).isNextDev) {
-        browser.elementByCss('#to-article-rewrite').moveTo()
+        await browser.elementByCss('#to-article-rewrite').moveTo()
 
         await retry(async () => {
           expect(requests.some((item) => item.includes('article'))).toBe(true)
@@ -75,7 +75,9 @@ describe('Middleware Rewrite', () => {
     it('should handle static dynamic rewrite from middleware correctly', async () => {
       const browser = await webdriver(next.url, '/rewrite-to-static')
 
-      await check(() => browser.eval('next.router.query.slug'), 'post-1')
+      await retry(async () => {
+        expect(await browser.eval('next.router.query.slug')).toBe('post-1')
+      })
       expect(await browser.elementByCss('#page').text()).toBe(
         '/static-ssg/[slug]'
       )
@@ -96,7 +98,11 @@ describe('Middleware Rewrite', () => {
         '/config-rewrite-to-dynamic-static/post-2'
       )
 
-      await check(() => browser.eval('next.router.query.rewriteSlug'), 'post-2')
+      await retry(async () => {
+        expect(await browser.eval('next.router.query.rewriteSlug')).toBe(
+          'post-2'
+        )
+      })
       expect(
         JSON.parse(await browser.eval('JSON.stringify(next.router.query)'))
       ).toEqual({
@@ -118,10 +124,11 @@ describe('Middleware Rewrite', () => {
         requests.push(new URL(req.url()).pathname)
       })
 
-      await check(
-        () => browser.eval(`next.router.isReady ? "yup" : "nope"`),
-        'yup'
-      )
+      await retry(async () => {
+        expect(await browser.eval(`next.router.isReady ? "yup" : "nope"`)).toBe(
+          'yup'
+        )
+      })
 
       expect(
         requests.filter((url) => url === '/fallback-true-blog/first.json')
@@ -136,17 +143,20 @@ describe('Middleware Rewrite', () => {
       expect(await browser.eval('next.router.query.param')).toBe('param-1')
 
       await browser.eval(`next.router.push("/fallback-true-blog/first")`)
-      await check(
-        () => browser.eval('next.router.pathname'),
-        '/fallback-true-blog/[slug]'
-      )
+      await retry(async () => {
+        expect(await browser.eval('next.router.pathname')).toBe(
+          '/fallback-true-blog/[slug]'
+        )
+      })
       expect(await browser.eval('next.router.query.slug')).toBe('first')
       expect(await browser.eval('next.router.asPath')).toBe(
         '/fallback-true-blog/first'
       )
 
       await browser.back()
-      await check(() => browser.eval('next.router.pathname'), '/[param]')
+      await retry(async () => {
+        expect(await browser.eval('next.router.pathname')).toBe('/[param]')
+      })
       expect(await browser.eval('next.router.query.param')).toBe('param-1')
       expect(await browser.eval('next.router.asPath')).toBe('/param-1')
     })
@@ -160,34 +170,39 @@ describe('Middleware Rewrite', () => {
       let browser = await webdriver(next.url, '/')
       await browser.eval(`next.router.push("/afterfiles-rewrite-ssg")`)
 
-      await check(
-        () => browser.eval('next.router.isReady ? "yup": "nope"'),
-        'yup'
-      )
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /"slug":"first"/
-      )
+      await retry(async () => {
+        expect(await browser.eval('next.router.isReady ? "yup": "nope"')).toBe(
+          'yup'
+        )
+      })
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/"slug":"first"/)
+      })
 
       browser = await webdriver(next.url, '/afterfiles-rewrite-ssg')
-      await check(
-        () => browser.eval('next.router.isReady ? "yup": "nope"'),
-        'yup'
-      )
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /"slug":"first"/
-      )
+      await retry(async () => {
+        expect(await browser.eval('next.router.isReady ? "yup": "nope"')).toBe(
+          'yup'
+        )
+      })
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/"slug":"first"/)
+      })
     })
 
     it('should hard navigate on 404 for data request', async () => {
       const browser = await webdriver(next.url, '/')
       await browser.eval('window.beforeNav = 1')
       await browser.eval(`next.router.push("/to/some/404/path")`)
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /custom 404 page/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/custom 404 page/)
+      })
       expect(await browser.eval('location.pathname')).toBe('/to/some/404/path')
       expect(await browser.eval('window.beforeNav')).not.toBe(1)
     })
@@ -203,34 +218,42 @@ describe('Middleware Rewrite', () => {
     it('should rewrite correctly when navigating via history', async () => {
       const browser = await webdriver(next.url, '/')
       await browser.elementByCss('#override-with-internal-rewrite').click()
-      await check(() => {
-        return browser.eval('document.documentElement.innerHTML')
-      }, /Welcome Page A/)
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page A/)
+      })
 
       await browser.refresh()
       await browser.back()
       await browser.waitForElementByCss('#override-with-internal-rewrite')
       await browser.forward()
-      await check(() => {
-        return browser.eval('document.documentElement.innerHTML')
-      }, /Welcome Page A/)
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page A/)
+      })
     })
 
     it('should rewrite correctly when navigating via history after query update', async () => {
       const browser = await webdriver(next.url, '/')
       await browser.elementByCss('#override-with-internal-rewrite').click()
-      await check(() => {
-        return browser.eval('document.documentElement.innerHTML')
-      }, /Welcome Page A/)
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page A/)
+      })
 
       await browser.refresh()
       await browser.waitForCondition(`!!window.next.router.isReady`)
       await browser.back()
       await browser.waitForElementByCss('#override-with-internal-rewrite')
       await browser.forward()
-      await check(() => {
-        return browser.eval('document.documentElement.innerHTML')
-      }, /Welcome Page A/)
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page A/)
+      })
     })
 
     it('should return HTML/data correctly for pre-rendered page', async () => {
@@ -278,10 +301,11 @@ describe('Middleware Rewrite', () => {
 
       const browser = await webdriver(next.url, ``)
       await browser.elementByCss('#override-with-internal-rewrite').click()
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /Welcome Page A/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page A/)
+      })
       expect(await browser.eval('window.location.pathname')).toBe(`/about`)
       expect(await browser.eval('window.location.search')).toBe(
         '?override=internal'
@@ -312,15 +336,19 @@ describe('Middleware Rewrite', () => {
 
       const browser = await webdriver(next.url, ``)
       await browser.elementByCss('#override-with-external-rewrite').click()
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /Example Domain/
-      )
-      await check(() => browser.eval('window.location.pathname'), `/about`)
-      await check(
-        () => browser.eval('window.location.search'),
-        '?override=external'
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Example Domain/)
+      })
+      await retry(async () => {
+        expect(await browser.eval('window.location.pathname')).toBe('/about')
+      })
+      await retry(async () => {
+        expect(await browser.eval('window.location.search')).toBe(
+          '?override=external'
+        )
+      })
     })
 
     it(`should rewrite to the external url for incoming data request externally rewritten`, async () => {
@@ -329,10 +357,11 @@ describe('Middleware Rewrite', () => {
         `/_next/data/${next.buildId}/es/about.json?override=external`,
         undefined
       )
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /Example Domain/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Example Domain/)
+      })
     })
 
     it('should rewrite to fallback: true page successfully', async () => {
@@ -344,12 +373,10 @@ describe('Middleware Rewrite', () => {
       const randomSlug2 = `another-${Date.now()}`
       const browser = await webdriver(next.url, `/to-blog/${randomSlug2}`)
 
-      await check(async () => {
+      await retry(async () => {
         const props = JSON.parse(await browser.elementByCss('#props').text())
-        return props.params.slug === randomSlug2
-          ? 'success'
-          : JSON.stringify(props)
-      }, 'success')
+        expect(props.params.slug).toBe(randomSlug2)
+      })
     })
 
     it('should allow to opt-out prefetch caching', async () => {
@@ -399,7 +426,7 @@ describe('Middleware Rewrite', () => {
       it('should not prefetch non-SSG routes', async () => {
         const browser = await webdriver(next.url, '/')
 
-        await check(async () => {
+        await retry(async () => {
           const hrefs = await browser.eval(
             `Object.keys(window.next.router.sdc)`
           )
@@ -408,8 +435,7 @@ describe('Middleware Rewrite', () => {
               return JSON.stringify(hrefs, null, 2)
             }
           }
-          return 'yes'
-        }, 'yes')
+        })
       })
     }
 
@@ -443,10 +469,11 @@ describe('Middleware Rewrite', () => {
 
       const browser = await webdriver(next.url, `/`)
       await browser.elementByCss('#rewrite-me-to-about').click()
-      await check(
-        () => browser.eval(`window.location.pathname`),
-        `/rewrite-me-to-about`
-      )
+      await retry(async () => {
+        expect(await browser.eval('window.location.pathname')).toBe(
+          '/rewrite-me-to-about'
+        )
+      })
       const element = await browser.elementByCss('.title')
       expect(await element.text()).toEqual('About Page')
     })
@@ -476,10 +503,11 @@ describe('Middleware Rewrite', () => {
 
       const browser = await webdriver(next.url, '/')
       await browser.elementByCss('#rewrite-to-beforefiles-rewrite').click()
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /Welcome Page A/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page A/)
+      })
       expect(await browser.eval('window.location.pathname')).toBe(
         `/rewrite-to-beforefiles-rewrite`
       )
@@ -492,10 +520,11 @@ describe('Middleware Rewrite', () => {
 
       const browser = await webdriver(next.url, '/')
       await browser.elementByCss('#rewrite-to-afterfiles-rewrite').click()
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /Welcome Page B/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/Welcome Page B/)
+      })
       expect(await browser.eval('window.location.pathname')).toBe(
         `/rewrite-to-afterfiles-rewrite`
       )
@@ -507,13 +536,10 @@ describe('Middleware Rewrite', () => {
         '/fallback-true-blog/first?hello=world'
       )
 
-      await check(
-        () =>
-          browser.eval(
-            'next.router.query.hello === "world" ? "success" : JSON.stringify(next.router.query)'
-          ),
-        'success'
-      )
+      await retry(async () => {
+        const hello = await browser.eval('next.router.query.hello')
+        expect(hello).toBe('world')
+      })
 
       expect(await browser.eval('next.router.query')).toEqual({
         slug: 'first',
@@ -537,7 +563,9 @@ describe('Middleware Rewrite', () => {
       await browser.eval(
         `next.router.push('/about?hello=world', undefined, { shallow: true })`
       )
-      await check(() => browser.eval(`next.router.query.hello`), 'world')
+      await retry(async () => {
+        expect(await browser.eval(`next.router.query.hello`)).toBe('world')
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe('/about')
       expect(
@@ -549,10 +577,11 @@ describe('Middleware Rewrite', () => {
       await browser.eval(
         `next.router.push('/about', undefined, { shallow: true })`
       )
-      await check(
-        () => browser.eval(`next.router.query.hello || 'empty'`),
-        'empty'
-      )
+      await retry(async () => {
+        expect(await browser.eval(`next.router.query.hello || 'empty'`)).toBe(
+          'empty'
+        )
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe('/about')
       expect(
@@ -565,10 +594,10 @@ describe('Middleware Rewrite', () => {
     it('should handle shallow navigation correctly (dynamic page)', async () => {
       const browser = await webdriver(next.url, '/fallback-true-blog/first')
 
-      await check(async () => {
+      await retry(async () => {
         await browser.elementByCss('#to-query-shallow').click()
-        return browser.eval('location.search')
-      }, '?hello=world')
+        expect(await browser.eval('location.search')).toBe('?hello=world')
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe(
         '/fallback-true-blog/[slug]'
@@ -582,7 +611,9 @@ describe('Middleware Rewrite', () => {
       expect(await browser.eval('location.search')).toBe('?hello=world')
 
       await browser.elementByCss('#to-no-query-shallow').click()
-      await check(() => browser.eval(`next.router.query.slug`), 'second')
+      await retry(async () => {
+        expect(await browser.eval(`next.router.query.slug`)).toBe('second')
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe(
         '/fallback-true-blog/[slug]'
@@ -615,13 +646,13 @@ describe('Middleware Rewrite', () => {
       })
 
       // wait for initial query update request
-      await check(async () => {
+      await retry(async () => {
         const didReq = await browser.eval('next.router.isReady')
         if (requests.length > 0 || didReq) {
           requests = []
           return 'yup'
         }
-      }, 'yup')
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe(
         '/fallback-true-blog/[slug]'
@@ -637,10 +668,11 @@ describe('Middleware Rewrite', () => {
       expect(await browser.eval('location.search')).toBe('')
 
       await browser.eval(`next.router.push('/fallback-true-blog/rewritten')`)
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /About Page/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/About Page/)
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe('/about')
       expect(
@@ -658,10 +690,11 @@ describe('Middleware Rewrite', () => {
       ).toBe(true)
 
       await browser.eval(`next.router.push('/fallback-true-blog/second')`)
-      await check(
-        () => browser.eval(`next.router.pathname`),
-        '/fallback-true-blog/[slug]'
-      )
+      await retry(async () => {
+        expect(await browser.eval(`next.router.pathname`)).toBe(
+          '/fallback-true-blog/[slug]'
+        )
+      })
 
       expect(await browser.eval(`next.router.pathname`)).toBe(
         '/fallback-true-blog/[slug]'

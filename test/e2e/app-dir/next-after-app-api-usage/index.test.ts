@@ -50,7 +50,7 @@ describe('nextjs APIs in after()', () => {
     it('cannot be called in a dynamic page', async () => {
       const path = '/request-apis/page-dynamic'
       await next.render(path)
-      await retry(() => {
+      await retry(async () => {
         const logs = getLogs()
 
         expect(logs).not.toContain(`[${path}] headers(): ok`)
@@ -97,7 +97,7 @@ describe('nextjs APIs in after()', () => {
         },
       ])('$title', async ({ path }) => {
         await next.render(path)
-        await retry(() => {
+        await retry(async () => {
           const logs = isNextDev ? getLogs() : buildLogs // in `next start` the error was logged at build time
 
           expect(logs).not.toContain(`[${path}] headers(): ok`)
@@ -137,7 +137,7 @@ describe('nextjs APIs in after()', () => {
       const path = '/request-apis/server-action'
       const browser = await next.browser(path)
       await browser.elementByCss('button[type="submit"]').click()
-      await retry(() => {
+      await retry(async () => {
         const logs = getLogs()
         expect(logs).toContain(`[${path}] headers(): ok`)
         expect(logs).toContain(`[${path}] nested headers(): ok`)
@@ -153,7 +153,7 @@ describe('nextjs APIs in after()', () => {
     it('can be called in a dynamic route handler', async () => {
       const path = '/request-apis/route-handler-dynamic'
       await next.render(path)
-      await retry(() => {
+      await retry(async () => {
         const logs = getLogs()
         expect(logs).toContain(`[${path}] headers(): ok`)
         expect(logs).toContain(`[${path}] nested headers(): ok`)
@@ -169,7 +169,7 @@ describe('nextjs APIs in after()', () => {
     it('can be called in a prerendered route handler with `dynamic = "force-static"`', async () => {
       const path = '/request-apis/route-handler-force-static'
       await next.render(path)
-      await retry(() => {
+      await retry(async () => {
         const logs = isNextDev ? getLogs() : buildLogs // in `next start` the error was logged at build time
         expect(logs).toContain(`[${path}] headers(): ok`)
         expect(logs).toContain(`[${path}] nested headers(): ok`)
@@ -185,7 +185,7 @@ describe('nextjs APIs in after()', () => {
     it('can be called in a prerendered route handler with `dynamic = "error" (but throw, because dynamic should error)`', async () => {
       const path = '/request-apis/route-handler-dynamic-error'
       await next.render(path)
-      await retry(() => {
+      await retry(async () => {
         const logs = isNextDev ? getLogs() : buildLogs // in `next start` the error was logged at build time
 
         expect(logs).not.toContain(`[${path}] headers(): ok`)
@@ -245,7 +245,7 @@ describe('nextjs APIs in after()', () => {
       },
     ])('$title', async ({ path, isDynamic }) => {
       await next.render(path)
-      await retry(() => {
+      await retry(async () => {
         // in `next start`, static routes log the error at build time
         const logs = isDynamic || isNextDev ? getLogs() : buildLogs
         expect(logs).toContain(`[${path}] draft.isEnabled: false`)
@@ -262,7 +262,7 @@ describe('nextjs APIs in after()', () => {
       const path = '/draft-mode/server-action'
       const browser = await next.browser(path)
       await browser.elementByCss('button[type="submit"]').click()
-      await retry(() => {
+      await retry(async () => {
         const logs = getLogs()
         expect(logs).toContain(`[${path}] draft.isEnabled: false`)
         expect(logs).toContain(

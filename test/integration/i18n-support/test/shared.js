@@ -13,7 +13,7 @@ import {
   renderViaHTTP,
   waitFor,
   normalizeRegEx,
-  check,
+  retry,
 } from 'next-test-utils'
 
 const domainLocales = ['go', 'go-BE', 'do', 'do-BE']
@@ -364,7 +364,10 @@ export function runTests(ctx) {
       )
     })()`)
 
-    await check(() => browser.eval('window.location.hostname'), /example\.com/)
+    await retry(async () => {
+      const hostname = await browser.eval('window.location.hostname')
+      expect(hostname).toMatch(/example\.com/)
+    })
     expect(await browser.eval('window.location.pathname')).toBe(
       ctx.basePath || '/'
     )
@@ -382,7 +385,10 @@ export function runTests(ctx) {
       )
     })()`)
 
-    await check(() => browser.eval('window.location.hostname'), /example\.com/)
+    await retry(async () => {
+      const hostname = await browser.eval('window.location.hostname')
+      expect(hostname).toMatch(/example\.com/)
+    })
     expect(await browser.eval('window.location.pathname')).toBe(
       `${ctx.basePath || ''}/go-BE/gssp`
     )
@@ -526,7 +532,10 @@ export function runTests(ctx) {
       )
     })()`)
 
-    await check(() => browser.elementByCss('#router-locale').text(), 'nl')
+    await retry(async () => {
+      const text = await browser.elementByCss('#router-locale').text()
+      expect(text).toBe('nl')
+    })
     expect(await browser.eval('window.beforeNav')).toBe(1)
 
     await browser.eval(`(function() {
@@ -535,7 +544,7 @@ export function runTests(ctx) {
       )
     })()`)
 
-    await check(async () => {
+    await retry(async () => {
       const html = await browser.eval('document.documentElement.innerHTML')
       const props = JSON.parse(cheerio.load(html)('#props').text())
 
@@ -545,8 +554,7 @@ export function runTests(ctx) {
         defaultLocale: 'en-US',
         query: { page: '1' },
       })
-      return 'success'
-    }, 'success')
+    })
 
     await browser
       .back()
@@ -612,7 +620,7 @@ export function runTests(ctx) {
         document.querySelector('#to-gsp-default').scrollIntoView()
       })()`)
 
-      await check(async () => {
+      await retry(async () => {
         const hrefs = await browser.eval(`Object.keys(window.next.router.sdc)`)
         hrefs.sort()
 
@@ -629,8 +637,7 @@ export function runTests(ctx) {
             '/fr/gsp/fallback/hello.json',
           ]
         )
-        return 'yes'
-      }, 'yes')
+      })
     }
 
     expect(await browser.eval('window.beforeNav')).toBe(1)
@@ -657,7 +664,7 @@ export function runTests(ctx) {
         document.querySelector('#to-gsp-fr').scrollIntoView()
       })()`)
 
-      await check(async () => {
+      await retry(async () => {
         const hrefs = await browser.eval(`Object.keys(window.next.router.sdc)`)
         hrefs.sort()
 
@@ -669,8 +676,7 @@ export function runTests(ctx) {
           ),
           ['/en-US/gsp.json', '/fr.json', '/fr/gsp.json', '/nl-NL/gsp.json']
         )
-        return 'yes'
-      }, 'yes')
+      })
     })
   }
 
@@ -2145,7 +2151,7 @@ export function runTests(ctx) {
         document.querySelector('#to-no-fallback-first').scrollIntoView()
       })()`)
 
-      await check(async () => {
+      await retry(async () => {
         const hrefs = await browser.eval(`Object.keys(window.next.router.sdc)`)
         hrefs.sort()
 
@@ -2161,8 +2167,7 @@ export function runTests(ctx) {
             '/fr/gsp/fallback/hello.json',
           ]
         )
-        return 'yes'
-      }, 'yes')
+      })
     }
 
     expect(await browser.elementByCss('#router-pathname').text()).toBe('/links')
@@ -2356,7 +2361,7 @@ export function runTests(ctx) {
         document.querySelector('#to-no-fallback-first').scrollIntoView()
       })()`)
 
-      await check(async () => {
+      await retry(async () => {
         const hrefs = await browser.eval(`Object.keys(window.next.router.sdc)`)
         hrefs.sort()
 
@@ -2373,8 +2378,7 @@ export function runTests(ctx) {
             '/fr/gsp/fallback/hello.json',
           ]
         )
-        return 'yes'
-      }, 'yes')
+      })
     }
 
     expect(await browser.elementByCss('#router-pathname').text()).toBe(

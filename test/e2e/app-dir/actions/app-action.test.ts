@@ -3,7 +3,6 @@ import { FileRef, nextTestSetup } from 'e2e-utils'
 import {
   assertHasRedbox,
   retry,
-  check,
   waitFor,
   getRedboxSource,
 } from 'next-test-utils'
@@ -257,7 +256,7 @@ describe('app-dir action handling', () => {
 
     // we don't have access to runtime logs on deploy
     if (!isNextDeploy) {
-      await retry(() => {
+      await retry(async () => {
         expect(
           logs.some((log) => log.includes('accept header: text/x-component'))
         ).toBe(true)
@@ -292,7 +291,7 @@ describe('app-dir action handling', () => {
 
     // we don't have access to runtime logs on deploy
     if (!isNextDeploy) {
-      await retry(() => {
+      await retry(async () => {
         expect(
           logs.some((log) =>
             log.includes('Failed to find Server Action "null"')
@@ -398,7 +397,7 @@ describe('app-dir action handling', () => {
 
     // we don't have access to runtime logs on deploy
     if (!isNextDeploy) {
-      await retry(() => {
+      await retry(async () => {
         expect(
           logs.some((log) =>
             log.includes('File name: hello你好テスト.txt size: 5')
@@ -486,7 +485,9 @@ describe('app-dir action handling', () => {
     // navigate to server
     await browser.elementByCss('#navigate-server').click()
     // intentionally bailing after 2 retries so we don't retry to the point where the async function resolves
-    await check(() => browser.url(), `${next.url}/server`, true, 2)
+    await retry(async () => {
+      expect(await browser.url()).toBe(`${next.url}/server`)
+    })
 
     browser = await next.browser('/server')
 
@@ -495,7 +496,9 @@ describe('app-dir action handling', () => {
     // navigate to client
     await browser.elementByCss('#navigate-client').click()
     // intentionally bailing after 2 retries so we don't retry to the point where the async function resolves
-    await check(() => browser.url(), `${next.url}/client`, true, 2)
+    await retry(async () => {
+      expect(await browser.url()).toBe(`${next.url}/client`)
+    })
   })
 
   it('should not block router.back() while a server action is in flight', async () => {
@@ -508,7 +511,9 @@ describe('app-dir action handling', () => {
     await browser.back()
 
     // intentionally bailing after 2 retries so we don't retry to the point where the async function resolves
-    await check(() => browser.url(), `${next.url}/`, true, 2)
+    await retry(async () => {
+      expect(await browser.url()).toBe(`${next.url}/`)
+    })
   })
 
   it('should trigger a refresh for a server action that gets discarded due to a navigation', async () => {
@@ -830,7 +835,7 @@ describe('app-dir action handling', () => {
 
       await browser.elementByCss('button').click()
 
-      await retry(() => {
+      await retry(async () => {
         expect(logs.join('')).toContain('result: true')
       })
     })

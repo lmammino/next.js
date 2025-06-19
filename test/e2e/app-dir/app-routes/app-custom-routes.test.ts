@@ -1,5 +1,5 @@
 import { nextTestSetup } from 'e2e-utils'
-import { check, waitFor, retry } from 'next-test-utils'
+import { waitFor, retry } from 'next-test-utils'
 import { Readable } from 'stream'
 
 import {
@@ -67,15 +67,14 @@ describe('app-custom-routes', () => {
         now: expect.any(Number),
       })
       if (isNextStart) {
-        await check(async () => {
+        await retry(async () => {
           expect(
             await next.readFile(`.next/server/app/${path}.body`)
           ).toBeTruthy()
           expect(
             await next.readFile(`.next/server/app/${path}.meta`)
           ).toBeTruthy()
-          return 'success'
-        }, 'success')
+        })
       }
     })
 
@@ -90,21 +89,19 @@ describe('app-custom-routes', () => {
         now: expect.any(Number),
       })
 
-      await check(async () => {
+      await retry(async () => {
         expect(data).not.toEqual(JSON.parse(await next.render(basePath + path)))
-        return 'success'
-      }, 'success')
+      })
 
       if (isNextStart) {
-        await check(async () => {
+        await retry(async () => {
           expect(
             await next.readFile(`.next/server/app/${path}.body`)
           ).toBeTruthy()
           expect(
             await next.readFile(`.next/server/app/${path}.meta`)
           ).toBeTruthy()
-          return 'success'
-        }, 'success')
+        })
       }
     })
   })
@@ -562,10 +559,9 @@ describe('app-custom-routes', () => {
       expect(await res.text()).toBeEmpty()
 
       if (!isNextDeploy) {
-        await check(() => {
+        await retry(async () => {
           expect(next.cliOutput).toContain(error)
-          return 'yes'
-        }, 'yes')
+        })
       }
     })
   })
@@ -665,11 +661,8 @@ describe('app-custom-routes', () => {
         await next.deleteFile('app/default/route.ts')
       })
       it('should print an error when exporting a default handler in dev', async () => {
-        await check(async () => {
+        await retry(async () => {
           const res = await next.fetch(basePath + '/default')
-
-          // Ensure we get a 405 (Method Not Allowed) response when there is no
-          // exported handler for the GET method.
           expect(res.status).toEqual(405)
           expect(next.cliOutput).toMatch(
             /Detected default export in '.+\/route\.ts'\. Export a named export for each HTTP method instead\./
@@ -677,8 +670,7 @@ describe('app-custom-routes', () => {
           expect(next.cliOutput).toMatch(
             /No HTTP methods exported in '.+\/route\.ts'\. Export a named export for each HTTP method\./
           )
-          return 'yes'
-        }, 'yes')
+        })
       })
     })
   }
@@ -688,7 +680,7 @@ describe('app-custom-routes', () => {
     describe('no response returned', () => {
       it('should print an error when no response is returned', async () => {
         await next.fetch(basePath + '/no-response', { method: 'POST' })
-        await retry(() => {
+        await retry(async () => {
           expect(next.cliOutput).toMatch(
             /No response is returned from route handler '.+\/route\.ts'\. Ensure you return a `Response` or a `NextResponse` in all branches of your handler\./
           )

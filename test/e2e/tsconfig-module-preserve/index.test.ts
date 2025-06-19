@@ -26,7 +26,7 @@ describe('tsconfig module: preserve', () => {
   it('allows you to skip moduleResolution, esModuleInterop and resolveJsonModule when using "module: preserve"', async () => {
     let output = ''
 
-    await retry(() => {
+    await retry(async () => {
       output = stripAnsi(next.cliOutput)
       expect(output).toContain(
         'The following mandatory changes were made to your tsconfig.json'

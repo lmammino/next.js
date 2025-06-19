@@ -25,7 +25,7 @@ describe('conflicting-page-segments', () => {
     } else {
       await expect(next.start()).rejects.toThrow('next build failed')
 
-      await retry(() => {
+      await retry(async () => {
         expect(next.cliOutput).toMatch(
           /You cannot have two parallel pages that resolve to the same path\. Please check \/\(group-a\)(\/page)? and \/\(group-b\)(\/page)?\./i
         )

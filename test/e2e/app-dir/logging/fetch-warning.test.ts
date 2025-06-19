@@ -23,7 +23,7 @@ describe('app-dir - fetch warnings', () => {
   if (isNextDev) {
     describe('force-cache and revalidate: 0', () => {
       it('should log when request input is a string', async () => {
-        await retry(() => {
+        await retry(async () => {
           expect(next.cliOutput).toInclude(`
  │ GET https://next-data-api-endpoint.vercel.app/api/random?request-string
  │ │ ⚠ Specified "cache: force-cache" and "revalidate: 0", only one should be specified.`)
@@ -31,7 +31,7 @@ describe('app-dir - fetch warnings', () => {
       })
 
       it('should log when request input is a Request instance', async () => {
-        await retry(() => {
+        await retry(async () => {
           expect(next.cliOutput).toInclude(`
  │ GET https://next-data-api-endpoint.vercel.app/api/random?request-input-cache-override
  │ │ ⚠ Specified "cache: force-cache" and "revalidate: 0", only one should be specified.`)
@@ -39,7 +39,7 @@ describe('app-dir - fetch warnings', () => {
       })
 
       it('should not log when not overriding cache within the Request object', async () => {
-        await retry(() => {
+        await retry(async () => {
           expect(next.cliOutput).not.toInclude(`
  │ GET https://next-data-api-endpoint.vercel.app/api/random?request-input
  │ │ ⚠ Specified "cache:`)
@@ -49,7 +49,7 @@ describe('app-dir - fetch warnings', () => {
 
     describe('no-store and revalidate > 0', () => {
       it('should log when request input is a string', async () => {
-        await retry(() => {
+        await retry(async () => {
           expect(next.cliOutput).toInclude(`
  │ GET https://next-data-api-endpoint.vercel.app/api/random?no-store-request-string
  │ │ ⚠ Specified "cache: no-store" and "revalidate: 3", only one should be specified.`)
@@ -57,7 +57,7 @@ describe('app-dir - fetch warnings', () => {
       })
 
       it('should log when request input is a Request instance', async () => {
-        await retry(() => {
+        await retry(async () => {
           expect(next.cliOutput).toInclude(`
  │ GET https://next-data-api-endpoint.vercel.app/api/random?no-store-request-input-cache-override
  │ │ ⚠ Specified "cache: no-store" and "revalidate: 3", only one should be specified.`)
@@ -66,7 +66,7 @@ describe('app-dir - fetch warnings', () => {
     })
   } else {
     it('should not log fetch warnings in production', async () => {
-      await retry(() => {
+      await retry(async () => {
         expect(next.cliOutput).not.toInclude(
           '⚠ Specified "cache: force-cache" and "revalidate: 3", only one should be specified.'
         )

@@ -1,5 +1,5 @@
 import { nextTestSetup } from 'e2e-utils'
-import { check } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { NEXT_RSC_UNION_QUERY } from 'next/dist/client/components/app-router-headers'
 
 import { SavedSpan } from './constants'
@@ -899,7 +899,7 @@ type HierSavedSpan = SavedSpan & { spans?: HierSavedSpan[] }
 type SpanMatch = Omit<Partial<HierSavedSpan>, 'spans'> & { spans?: SpanMatch[] }
 
 async function expectTrace(collector: Collector, match: SpanMatch[]) {
-  await check(async () => {
+  await retry(async () => {
     const traces = collector.getSpans()
 
     const tree: HierSavedSpan[] = []
@@ -948,6 +948,5 @@ async function expectTrace(collector: Collector, match: SpanMatch[]) {
     })
 
     expect(tree).toMatchObject(match)
-    return 'success'
-  }, 'success')
+  })
 }

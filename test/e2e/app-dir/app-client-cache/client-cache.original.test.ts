@@ -1,5 +1,5 @@
 import { nextTestSetup } from 'e2e-utils'
-import { check, retry } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { Playwright } from 'next-webdriver'
 import {
   browserConfigWithFixedTime,
@@ -76,14 +76,13 @@ describe('app dir client cache semantics (30s/5min)', () => {
       it('should prefetch the full page', async () => {
         const { getRequests, clearRequests } =
           await createRequestsListener(browser)
-        await check(() => {
-          return getRequests().some(
+        await retry(async () => {
+          const hasRequest = getRequests().some(
             ([url, didPartialPrefetch]) =>
               getPathname(url) === '/0' && !didPartialPrefetch
           )
-            ? 'success'
-            : 'fail'
-        }, 'success')
+          expect(hasRequest).toBe(true)
+        })
 
         clearRequests()
 
@@ -130,14 +129,13 @@ describe('app dir client cache semantics (30s/5min)', () => {
         const { getRequests, clearRequests } =
           await createRequestsListener(browser)
 
-        await check(() => {
-          return getRequests().some(
+        await retry(async () => {
+          const hasRequest = getRequests().some(
             ([url, didPartialPrefetch]) =>
               getPathname(url) === '/0' && !didPartialPrefetch
           )
-            ? 'success'
-            : 'fail'
-        }, 'success')
+          expect(hasRequest).toBe(true)
+        })
 
         const randomNumber = await browser
           .elementByCss('[href="/0?timeout=0"]')
@@ -150,14 +148,13 @@ describe('app dir client cache semantics (30s/5min)', () => {
 
         await browser.elementByCss('[href="/"]').click()
 
-        await check(() => {
-          return getRequests().some(
+        await retry(async () => {
+          const hasRequest = getRequests().some(
             ([url, didPartialPrefetch]) =>
               getPathname(url) === '/0' && !didPartialPrefetch
           )
-            ? 'success'
-            : 'fail'
-        }, 'success')
+          expect(hasRequest).toBe(true)
+        })
 
         const number = await browser
           .elementByCss('[href="/0?timeout=0"]')
@@ -234,14 +231,13 @@ describe('app dir client cache semantics (30s/5min)', () => {
         const { getRequests, clearRequests } =
           await createRequestsListener(browser)
 
-        await check(() => {
-          return getRequests().some(
+        await retry(async () => {
+          const hasRequest = getRequests().some(
             ([url, didPartialPrefetch]) =>
               getPathname(url) === '/1' && didPartialPrefetch
           )
-            ? 'success'
-            : 'fail'
-        }, 'success')
+          expect(hasRequest).toBe(true)
+        })
 
         clearRequests()
 

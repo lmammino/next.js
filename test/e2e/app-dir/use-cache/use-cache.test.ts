@@ -692,8 +692,8 @@ describe('use-cache', () => {
     const browser = await next.browser('/method-props')
 
     let [value1, value2] = await Promise.all([
-      browser.elementByCss('#form-1 p').text(),
-      browser.elementByCss('#form-2 p').text(),
+      await browser.elementByCss('#form-1 p').text(),
+      await browser.elementByCss('#form-2 p').text(),
     ])
 
     expect(value1).toBe('-1')

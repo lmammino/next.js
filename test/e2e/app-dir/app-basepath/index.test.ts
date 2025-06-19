@@ -1,5 +1,5 @@
 import { nextTestSetup } from 'e2e-utils'
-import { check, retry } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import type { Request, Response } from 'playwright'
 
 describe('app dir - basepath', () => {
@@ -133,7 +133,9 @@ describe('app dir - basepath', () => {
       })
 
       await browser.elementById(buttonId).click()
-      await check(() => browser.url(), /\/base\/another/)
+      await retry(async () => {
+        expect(await browser.url()).toMatch(/\/base\/another/)
+      })
 
       expect(await browser.waitForElementByCss('#page-2').text()).toBe(`Page 2`)
 
@@ -180,7 +182,9 @@ describe('app dir - basepath', () => {
     })
 
     await browser.elementById('redirect-absolute-external').click()
-    await check(() => browser.url(), /\/outsideBasePath/)
+    await retry(async () => {
+      expect(await browser.url()).toMatch(/\/outsideBasePath/)
+    })
 
     // We expect to see two requests, first a POST invoking the server
     // action. And second a GET request resolving the redirect.

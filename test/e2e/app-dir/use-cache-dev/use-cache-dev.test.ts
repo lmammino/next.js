@@ -17,9 +17,9 @@ describe('use-cache-dev', () => {
 
       const [initialFetchedRandom, initialText, initialMathRandom] =
         await Promise.all([
-          browser.elementById('fetchedRandom').text(),
-          browser.elementById('text').text(),
-          browser.elementById('mathRandom').text(),
+          await browser.elementById('fetchedRandom').text(),
+          await browser.elementById('text').text(),
+          await browser.elementById('mathRandom').text(),
         ])
 
       expect(initialFetchedRandom).toMatch(/[0,1]\.\d+/)
@@ -37,9 +37,9 @@ describe('use-cache-dev', () => {
 
       await retry(async () => {
         ;[newFetchedRandom, newText, newMathRandom] = await Promise.all([
-          browser.elementById('fetchedRandom').text(),
-          browser.elementById('text').text(),
-          browser.elementById('mathRandom').text(),
+          await browser.elementById('fetchedRandom').text(),
+          await browser.elementById('text').text(),
+          await browser.elementById('mathRandom').text(),
         ])
 
         // Cached via server components HMR cache:
@@ -60,9 +60,9 @@ describe('use-cache-dev', () => {
 
       await retry(async () => {
         const [fetchedRandom, text, mathRandom] = await Promise.all([
-          browser.elementById('fetchedRandom').text(),
-          browser.elementById('text').text(),
-          browser.elementById('mathRandom').text(),
+          await browser.elementById('fetchedRandom').text(),
+          await browser.elementById('text').text(),
+          await browser.elementById('mathRandom').text(),
         ])
 
         // Cached via server components HMR cache:
@@ -86,9 +86,9 @@ describe('use-cache-dev', () => {
         async () =>
           retry(async () => {
             const [fetchedRandom, text, mathRandom] = await Promise.all([
-              browser.elementById('fetchedRandom').text(),
-              browser.elementById('text').text(),
-              browser.elementById('mathRandom').text(),
+              await browser.elementById('fetchedRandom').text(),
+              await browser.elementById('text').text(),
+              await browser.elementById('mathRandom').text(),
             ])
 
             // This should be a full cache hit now:
@@ -168,8 +168,8 @@ describe('use-cache-dev', () => {
       const browser = await next.browser('/')
 
       const [initialFetchedRandom, initialMathRandom] = await Promise.all([
-        browser.elementById('fetchedRandom').text(),
-        browser.elementById('mathRandom').text(),
+        await browser.elementById('fetchedRandom').text(),
+        await browser.elementById('mathRandom').text(),
       ])
 
       await browser.addCookie({
@@ -187,8 +187,8 @@ describe('use-cache-dev', () => {
 
       await retry(async () => {
         ;[revalidatedFetchedRandom, revalidatedMathRandom] = await Promise.all([
-          browser.elementById('fetchedRandom').text(),
-          browser.elementById('mathRandom').text(),
+          await browser.elementById('fetchedRandom').text(),
+          await browser.elementById('mathRandom').text(),
         ])
 
         expect(revalidatedFetchedRandom).not.toBe(initialFetchedRandom)
@@ -205,9 +205,9 @@ describe('use-cache-dev', () => {
 
       await retry(async () => {
         const [fetchedRandom, mathRandom, uncached] = await Promise.all([
-          browser.elementById('fetchedRandom').text(),
-          browser.elementById('mathRandom').text(),
-          browser.elementById('uncached').text(),
+          await browser.elementById('fetchedRandom').text(),
+          await browser.elementById('mathRandom').text(),
+          await browser.elementById('uncached').text(),
         ])
 
         expect(uncached).not.toBe(initialUncached)

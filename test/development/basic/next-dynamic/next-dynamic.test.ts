@@ -2,7 +2,7 @@ import { join } from 'path'
 import cheerio from 'cheerio'
 import webdriver from 'next-webdriver'
 import { createNext, FileRef } from 'e2e-utils'
-import { assertNoRedbox, renderViaHTTP, check } from 'next-test-utils'
+import { assertNoRedbox, renderViaHTTP, retry } from 'next-test-utils'
 import { NextInstance } from 'e2e-utils'
 
 const customDocumentGipContent = `\
@@ -88,14 +88,16 @@ describe('next/dynamic', () => {
         let browser
         try {
           browser = await webdriver(next.url, basePath + '/dynamic/no-chunk')
-          await check(
-            () => browser.elementByCss('body').text(),
-            /Welcome, normal/
-          )
-          await check(
-            () => browser.elementByCss('body').text(),
-            /Welcome, dynamic/
-          )
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Welcome, normal/
+            )
+          })
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Welcome, dynamic/
+            )
+          })
         } finally {
           if (browser) {
             await browser.close()
@@ -115,12 +117,21 @@ describe('next/dynamic', () => {
         let browser
         try {
           browser = await webdriver(next.url, basePath + '/dynamic/nested')
-          await check(() => browser.elementByCss('body').text(), /Nested 1/)
-          await check(() => browser.elementByCss('body').text(), /Nested 2/)
-          await check(
-            () => browser.elementByCss('body').text(),
-            /Browser hydrated/
-          )
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Nested 1/
+            )
+          })
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Nested 2/
+            )
+          })
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Browser hydrated/
+            )
+          })
 
           if ((global as any).browserName === 'chrome') {
             const logs = await browser.log()
@@ -142,7 +153,9 @@ describe('next/dynamic', () => {
         let browser
         try {
           browser = await webdriver(next.url, basePath + '/dynamic/head')
-          await check(() => browser.elementByCss('body').text(), /test/)
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(/test/)
+          })
           const backgroundColor = await browser
             .elementByCss('.dynamic-style')
             .getComputedCss('background-color')
@@ -169,7 +182,11 @@ describe('next/dynamic', () => {
         let browser
         try {
           browser = await webdriver(next.url, basePath + '/dynamic/no-ssr')
-          await check(() => browser.elementByCss('body').text(), /navigator/)
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /navigator/
+            )
+          })
           await assertNoRedbox(browser)
         } finally {
           if (browser) {
@@ -182,7 +199,9 @@ describe('next/dynamic', () => {
         let browser
         try {
           browser = await webdriver(next.url, basePath + '/dynamic/no-ssr-esm')
-          await check(() => browser.elementByCss('body').text(), /esm.mjs/)
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(/esm.mjs/)
+          })
           await assertNoRedbox(browser)
         } finally {
           if (browser) {
@@ -203,10 +222,11 @@ describe('next/dynamic', () => {
         let browser
         try {
           browser = await webdriver(next.url, basePath + '/dynamic/ssr-true')
-          await check(
-            () => browser.elementByCss('body').text(),
-            /Hello World 1/
-          )
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Hello World 1/
+            )
+          })
         } finally {
           if (browser) {
             await browser.close()
@@ -240,10 +260,11 @@ describe('next/dynamic', () => {
               next.url,
               basePath + '/dynamic/chunkfilename'
             )
-            await check(
-              () => browser.elementByCss('body').text(),
-              /test chunkfilename/
-            )
+            await retry(async () => {
+              expect(await browser.elementByCss('body').text()).toMatch(
+                /test chunkfilename/
+              )
+            })
           } finally {
             if (browser) {
               await browser.close()
@@ -266,10 +287,11 @@ describe('next/dynamic', () => {
             next.url,
             basePath + '/dynamic/no-ssr-custom-loading'
           )
-          await check(
-            () => browser.elementByCss('body').text(),
-            /Hello World 1/
-          )
+          await retry(async () => {
+            expect(await browser.elementByCss('body').text()).toMatch(
+              /Hello World 1/
+            )
+          })
         } finally {
           if (browser) {
             await browser.close()

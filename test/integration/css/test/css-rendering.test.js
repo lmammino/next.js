@@ -1,13 +1,13 @@
 /* eslint-env jest */
 import { pathExists, readFile, readJSON, remove } from 'fs-extra'
 import {
-  check,
   findPort,
   File,
   killApp,
   nextBuild,
   nextStart,
   waitFor,
+  retry,
 } from 'next-test-utils'
 import webdriver from 'next-webdriver'
 import { join } from 'path'
@@ -272,11 +272,12 @@ module.exports = {
 
               // Navigate to other:
               await browser.waitForElementByCss('#link-other').click()
-              await check(
-                () => browser.eval(`document.body.innerText`),
-                'Application error: a client-side exception has occurred while loading localhost (see the browser console for more information).',
-                true
-              )
+              await retry(async () => {
+                const text = await browser.eval(`document.body.innerText`)
+                expect(text).toBe(
+                  'Application error: a client-side exception has occurred while loading localhost (see the browser console for more information).'
+                )
+              })
 
               const newPageStyles = await browser.eval(
                 `document.querySelector('link[rel=stylesheet][data-n-p]')`
@@ -436,10 +437,11 @@ module.exports = {
           const browser = await webdriver(appPort, '/')
           try {
             await checkBlackTitle(browser)
-            await check(
-              () => browser.eval(`document.querySelector('p').innerText`),
-              'mounted'
-            )
+            await retry(async () => {
+              expect(
+                await browser.eval(`document.querySelector('p').innerText`)
+              ).toBe('mounted')
+            })
           } finally {
             await browser.close()
           }
@@ -449,10 +451,11 @@ module.exports = {
           const browser = await webdriver(appPort, '/client')
           try {
             await checkRedTitle(browser)
-            await check(
-              () => browser.eval(`document.querySelector('p').innerText`),
-              'mounted'
-            )
+            await retry(async () => {
+              expect(
+                await browser.eval(`document.querySelector('p').innerText`)
+              ).toBe('mounted')
+            })
           } finally {
             await browser.close()
           }
@@ -462,16 +465,18 @@ module.exports = {
           const browser = await webdriver(appPort, '/')
           try {
             await checkBlackTitle(browser)
-            await check(
-              () => browser.eval(`document.querySelector('p').innerText`),
-              'mounted'
-            )
+            await retry(async () => {
+              expect(
+                await browser.eval(`document.querySelector('p').innerText`)
+              ).toBe('mounted')
+            })
             await browser.eval(`document.querySelector('#link-client').click()`)
             await checkRedTitle(browser)
-            await check(
-              () => browser.eval(`document.querySelector('p').innerText`),
-              'mounted'
-            )
+            await retry(async () => {
+              expect(
+                await browser.eval(`document.querySelector('p').innerText`)
+              ).toBe('mounted')
+            })
           } finally {
             await browser.close()
           }

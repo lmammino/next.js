@@ -12,7 +12,7 @@ describe('basic app-dir tests', () => {
     const { session, browser } = sandbox
     await session.assertNoRedbox()
 
-    browser.refresh()
+    await browser.refresh()
 
     await waitFor(750)
     await waitForHydration(browser)

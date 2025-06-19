@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { check } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import path from 'path'
 import { nextTestSetup } from 'e2e-utils'
 
@@ -45,21 +45,27 @@ describe('Client navigation querystring', () => {
       const browser = await next.browser('/nav/query-only')
       await browser.elementByCss('#link').click()
 
-      await check(() => browser.waitForElementByCss('#prop').text(), 'foo')
+      await retry(async () => {
+        expect(await browser.waitForElementByCss('#prop').text()).toBe('foo')
+      })
     })
 
     it('should work with router.push', async () => {
       const browser = await next.browser('/nav/query-only')
       await browser.elementByCss('#router-push').click()
 
-      await check(() => browser.waitForElementByCss('#prop').text(), 'bar')
+      await retry(async () => {
+        expect(await browser.waitForElementByCss('#prop').text()).toBe('bar')
+      })
     })
 
     it('should work with router.replace', async () => {
       const browser = await next.browser('/nav/query-only')
       await browser.elementByCss('#router-replace').click()
 
-      await check(() => browser.waitForElementByCss('#prop').text(), 'baz')
+      await retry(async () => {
+        expect(await browser.waitForElementByCss('#prop').text()).toBe('baz')
+      })
     })
 
     it('router.replace with shallow=true shall not throw route cancelled errors', async () => {
@@ -68,10 +74,11 @@ describe('Client navigation querystring', () => {
       // the error occurs on every replace() after the first one
       await browser.elementByCss('#router-replace').click()
 
-      await check(
-        () => browser.waitForElementByCss('#routeState').text(),
-        '{"completed":2,"errors":0}'
-      )
+      await retry(async () => {
+        expect(await browser.waitForElementByCss('#routeState').text()).toBe(
+          '{"completed":2,"errors":0}'
+        )
+      })
     })
   })
 })

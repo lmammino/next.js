@@ -2,7 +2,7 @@
 import { createSandbox } from 'development-sandbox'
 import { FileRef, nextTestSetup } from 'e2e-utils'
 import path from 'path'
-import { check } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { outdent } from 'outdent'
 
 describe('ReactRefreshRegression app', () => {
@@ -174,17 +174,19 @@ describe('ReactRefreshRegression app', () => {
       `
     )
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      '0'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('0')
+    })
 
     await session.evaluate(() => document.querySelector('button').click())
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      '1'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('1')
+    })
 
     await session.patch(
       'index.js',
@@ -205,17 +207,19 @@ describe('ReactRefreshRegression app', () => {
       `
     )
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      'Count: 1'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('Count: 1')
+    })
 
     await session.evaluate(() => document.querySelector('button').click())
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      'Count: 2'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('Count: 2')
+    })
   })
 
   // https://github.com/vercel/next.js/issues/13978
@@ -256,10 +260,11 @@ describe('ReactRefreshRegression app', () => {
       `
     )
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      '0'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('0')
+    })
 
     await session.evaluate(() => document.querySelector('button').click())
     expect(

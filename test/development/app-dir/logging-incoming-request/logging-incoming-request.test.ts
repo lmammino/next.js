@@ -22,7 +22,7 @@ describe('logging-incoming-request', () => {
     response = await next.fetch('/foo')
     expect(response.status).toBe(200)
 
-    await retry(() => {
+    await retry(async () => {
       expect(next.cliOutput).not.toContain('GET /hello')
       expect(next.cliOutput).not.toContain('GET /non-existent')
       expect(next.cliOutput).not.toContain('GET /_next/static/test.js')

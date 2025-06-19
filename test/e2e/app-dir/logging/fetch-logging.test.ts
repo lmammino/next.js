@@ -101,7 +101,7 @@ describe('app-dir - logging', () => {
         const outputIndex = next.cliOutput.length
         await next.fetch('/default-cache')
 
-        await retry(() => {
+        await retry(async () => {
           const logs = stripAnsi(next.cliOutput.slice(outputIndex))
           if (isNextDev) {
             expect(logs).toContain('GET /default-cache 200')
@@ -116,7 +116,7 @@ describe('app-dir - logging', () => {
           const outputIndex = next.cliOutput.length
           await next.fetch('/default-cache')
 
-          await retry(() => {
+          await retry(async () => {
             const logs = parseLogsFromCli(next.cliOutput.slice(outputIndex))
 
             const logEntry = logs.find((log) =>
@@ -134,7 +134,7 @@ describe('app-dir - logging', () => {
         it("should log 'skip' cache status with a reason when revalidate: 0 is used", async () => {
           const outputIndex = next.cliOutput.length
           await next.fetch('/default-cache')
-          await retry(() => {
+          await retry(async () => {
             const logs = parseLogsFromCli(next.cliOutput.slice(outputIndex))
 
             const logEntry = logs.find((log) =>
@@ -150,7 +150,7 @@ describe('app-dir - logging', () => {
           await next.fetch('/default-cache', {
             headers: { 'Cache-Control': 'no-cache' },
           })
-          await retry(() => {
+          await retry(async () => {
             const logs = parseLogsFromCli(next.cliOutput.slice(outputIndex))
 
             const logEntry = logs.find((log) =>
@@ -171,7 +171,7 @@ describe('app-dir - logging', () => {
             ? 'https://next-data-api-endpoint.vercel.app/api/random'
             : 'https://next-data-api-en../api/random'
 
-          await retry(() => {
+          await retry(async () => {
             const logs = stripAnsi(next.cliOutput.slice(outputIndex))
             expect(logs).toIncludeRepeated(' GET /default-cache', 1)
             expect(logs).toIncludeRepeated(` │ GET ${expectedUrl}`, 7)
@@ -187,7 +187,7 @@ describe('app-dir - logging', () => {
             ? 'https://next-data-api-endpoint.vercel.app/api/random'
             : 'https://next-data-api-en../api/random'
 
-          await retry(() => {
+          await retry(async () => {
             const logs = stripAnsi(next.cliOutput.slice(outputIndex))
             expect(logs).toIncludeRepeated(` │ GET ${expectedUrl}`, 6)
             expect(logs).toIncludeRepeated(` │ POST ${expectedUrl}`, 6)
@@ -198,7 +198,7 @@ describe('app-dir - logging', () => {
           const logLength = next.cliOutput.length
           await next.fetch('/no-store')
 
-          await retry(() => {
+          await retry(async () => {
             const output = stripAnsi(next.cliOutput.slice(logLength))
             expect(output).toContain('Cache skipped reason: (noStore call)')
           })
@@ -208,7 +208,7 @@ describe('app-dir - logging', () => {
           const logLength = next.cliOutput.length
           await next.fetch('/fetch-no-store')
 
-          await retry(() => {
+          await retry(async () => {
             const output = stripAnsi(next.cliOutput.slice(logLength))
             expect(output).toContain('Cache skipped reason: (cache: no-store)')
           })
@@ -217,7 +217,7 @@ describe('app-dir - logging', () => {
         it('should log each page request only once', async () => {
           const outputIndex = next.cliOutput.length
           await next.fetch('/')
-          await retry(() => {
+          await retry(async () => {
             const logsAfterRequest = stripAnsi(
               next.cliOutput.slice(outputIndex)
             )
@@ -261,7 +261,7 @@ describe('app-dir - logging', () => {
             ? 'https://next-data-api-endpoint.vercel.app/api/random'
             : 'https://next-data-api-en../api/random'
 
-          await retry(() => {
+          await retry(async () => {
             const logs = stripAnsi(next.cliOutput.slice(outputIndex))
             expect(logs).toIncludeRepeated(` │ GET ${expectedUrl}`, 7)
           })
@@ -319,7 +319,7 @@ describe('app-dir - logging', () => {
         const outputIndex = next.cliOutput.length
         await next.fetch('/default-cache')
 
-        await retry(() => {
+        await retry(async () => {
           const logs = stripAnsi(next.cliOutput.slice(outputIndex))
           expect(logs).not.toContain('GET /default-cache 200')
         })
@@ -331,7 +331,7 @@ describe('app-dir - logging', () => {
         const logLength = next.cliOutput.length
         await next.fetch('/')
 
-        await retry(() => {
+        await retry(async () => {
           const output = stripAnsi(next.cliOutput.slice(logLength))
           expect(output).toContain('/')
           expect(output).not.toContain('/page')
@@ -342,7 +342,7 @@ describe('app-dir - logging', () => {
         const logLength = next.cliOutput.length
         await next.fetch('/dynamic/big/icon')
 
-        await retry(() => {
+        await retry(async () => {
           const output = stripAnsi(next.cliOutput.slice(logLength))
           expect(output).toContain('/dynamic/[slug]/icon')
           expect(output).not.toContain('/(group)')

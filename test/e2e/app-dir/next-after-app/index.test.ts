@@ -41,7 +41,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
   it('runs in dynamic pages', async () => {
     const response = await next.fetch(pathPrefix + '/123/dynamic')
     expect(response.status).toBe(200)
-    await retry(() => {
+    await retry(async () => {
       expect(getLogs()).toContainEqual({ source: '[layout] /[id]' })
       expect(getLogs()).toContainEqual({
         source: '[page] /[id]/dynamic',
@@ -56,7 +56,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
   it('runs in dynamic route handlers', async () => {
     const res = await next.fetch(pathPrefix + '/route')
     expect(res.status).toBe(200)
-    await retry(() => {
+    await retry(async () => {
       expect(getLogs()).toContainEqual({ source: '[route handler] /route' })
     })
   })
@@ -68,7 +68,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
     })
     await browser.elementByCss('button[type="submit"]').click()
 
-    await retry(() => {
+    await retry(async () => {
       expect(getLogs()).toContainEqual({
         source: '[action] /[id]/with-action',
         value: '123',
@@ -84,7 +84,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
   it('runs callbacks from nested after calls', async () => {
     await next.browser(pathPrefix + '/nested-after')
 
-    await retry(() => {
+    await retry(async () => {
       for (const id of [1, 2, 3]) {
         expect(getLogs()).toContainEqual({
           source: `[page] /nested-after (after #${id})`,
@@ -103,7 +103,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
     it('runs callbacks if redirect() was called', async () => {
       await next.browser(pathPrefix + '/interrupted/calls-redirect')
 
-      await retry(() => {
+      await retry(async () => {
         expect(getLogs()).toContainEqual({
           source: '[page] /interrupted/calls-redirect',
         })
@@ -146,7 +146,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
       }
       abortController.abort()
 
-      await retry(() => {
+      await retry(async () => {
         expect(getLogs()).toContainEqual({
           source: '[page] /interrupted/incomplete-stream/hang',
         })
@@ -199,7 +199,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
     )
 
     expect(res.status).toBe(200)
-    await retry(() => {
+    await retry(async () => {
       expect(getLogs()).toContainEqual({
         source: '[middleware] /middleware/redirect-source',
         requestId,
@@ -280,7 +280,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
         await pendingReq.then((res) => res.text())
 
         // the request is finished, so after() should run, and the logs should appear now.
-        await retry(() => {
+        await retry(async () => {
           expect(getLogs()).toContainEqual({
             source: '[page] /delay (Page)',
           })
@@ -377,7 +377,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
       )
 
       await next.browser(pathPrefix + path)
-      await retry(() => {
+      await retry(async () => {
         const logs = getLogs()
         expect(logs).toContainEqual(
           'waitUntil from "@next/request-context" was called'

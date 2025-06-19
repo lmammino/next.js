@@ -48,7 +48,7 @@ describe.each(
   })
 
   it('should show an experimental warning', async () => {
-    await retry(() => {
+    await retry(async () => {
       expect(next.cliOutput).toContain('Experiments (use with caution)')
       expect(stripAnsi(next.cliOutput)).toContain('✓ reactCompiler')
     })

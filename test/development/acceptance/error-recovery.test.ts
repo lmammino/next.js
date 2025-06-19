@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { createSandbox } from 'development-sandbox'
 import { FileRef, nextTestSetup } from 'e2e-utils'
-import { check, retry } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { outdent } from 'outdent'
 import path from 'path'
 
@@ -117,10 +117,11 @@ describe('pages/ error recovery', () => {
       `
     )
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      /Count: 1/
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toMatch(/Count: 1/)
+    })
 
     await session.assertNoRedbox()
   })

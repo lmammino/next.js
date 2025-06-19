@@ -18,7 +18,7 @@ beforeAll(async () => {
 it('page should not reload when the file is not changed', async () => {
   const browser = await webdriver(appPort, '/with+Special&Chars=')
 
-  browser.eval(`window.doesNotReloadCheck = true`)
+  await browser.eval(`window.doesNotReloadCheck = true`)
 
   await waitFor(10000)
 

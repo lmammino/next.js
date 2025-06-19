@@ -34,12 +34,12 @@ const runTests = () => {
     let html = await browser.eval(`document.documentElement.innerHTML`)
     expect(html).toMatch(/page:.*?\//)
 
-    browser.elementByCss('#another').click()
+    await browser.elementByCss('#another').click()
     await waitFor(waitTime)
     html = await browser.eval(`document.documentElement.innerHTML`)
     expect(html).toMatch(/page:.*?\//)
 
-    browser.elementByCss('#home').click()
+    await browser.elementByCss('#home').click()
     await waitFor(waitTime)
     html = await browser.eval(`document.documentElement.innerHTML`)
     expect(html).toMatch(/page:.*?\/another/)

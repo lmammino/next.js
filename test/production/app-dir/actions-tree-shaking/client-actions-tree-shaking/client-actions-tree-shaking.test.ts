@@ -80,7 +80,7 @@ describe('app-dir - client-actions-tree-shaking', () => {
     const browser = await next.browser('/route-1')
     await browser.elementById('submit').click()
 
-    await retry(() => {
+    await retry(async () => {
       expect(logs).toEqual(
         expect.arrayContaining([expect.stringContaining('This is action foo')])
       )
@@ -89,7 +89,7 @@ describe('app-dir - client-actions-tree-shaking', () => {
     const browser2 = await next.browser('/route-2')
     await browser2.elementById('submit').click()
 
-    await retry(() => {
+    await retry(async () => {
       expect(logs).toEqual(
         expect.arrayContaining([expect.stringContaining('This is action bar')])
       )

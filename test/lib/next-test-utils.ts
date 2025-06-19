@@ -697,49 +697,6 @@ export async function startCleanStaticServer(dir: string) {
   return server
 }
 
-/**
- * Check for content in 1 second intervals timing out after 30 seconds.
- * @deprecated use retry + expect instead
- * @param {() => Promise<unknown> | unknown} contentFn
- * @param {RegExp | string | number} regex
- * @param {boolean} hardError
- * @param {number} maxRetries
- * @returns {Promise<boolean>}
- */
-export async function check(
-  contentFn: () => any | Promise<any>,
-  regex: any,
-  hardError = true,
-  maxRetries = 30
-) {
-  let content
-  let lastErr
-
-  for (let tries = 0; tries < maxRetries; tries++) {
-    try {
-      content = await contentFn()
-      if (typeof regex !== typeof /regex/) {
-        if (regex === content) {
-          return true
-        }
-      } else if (regex.test(content)) {
-        // found the content
-        return true
-      }
-      await waitFor(1000)
-    } catch (err) {
-      await waitFor(1000)
-      lastErr = err
-    }
-  }
-  console.error('TIMED OUT CHECK: ', { regex, content, lastErr })
-
-  if (hardError) {
-    throw new Error('TIMED OUT: ' + regex + '\n\n' + content + '\n\n' + lastErr)
-  }
-  return false
-}
-
 export class File {
   path: string
   originalContent: string | null
@@ -796,7 +753,7 @@ export class File {
 
 export async function retry<T>(
   fn: () => T | Promise<T>,
-  duration: number = 3000,
+  duration: number = 30000,
   interval: number = 500,
   description?: string
 ): Promise<T> {
@@ -1503,8 +1460,8 @@ export function getUrlFromBackgroundImage(backgroundImage: string) {
   return matches
 }
 
-export const getTitle = (browser: Playwright) =>
-  browser.elementByCss('title').text()
+export const getTitle = async (browser: Playwright) =>
+  await browser.elementByCss('title').text()
 
 async function checkMeta(
   browser: Playwright,

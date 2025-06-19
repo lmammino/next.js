@@ -1,7 +1,6 @@
 /* eslint-env jest */
 
 import {
-  check,
   retry,
   findPort,
   killApp,
@@ -464,10 +463,11 @@ describe('Prefetching Links in viewport', () => {
       }
       window.next.router.push('/de-duped')
     })()`)
-        await check(
-          () => browser.eval('document.documentElement.innerHTML'),
-          /to \/first/
-        )
+        await retry(async () => {
+          expect(
+            await browser.eval('document.documentElement.innerHTML')
+          ).toMatch(/to \/first/)
+        })
         const calledPrefetch = await browser.eval(`window.calledPrefetch`)
         expect(calledPrefetch).toBe(false)
       })

@@ -1,4 +1,4 @@
-import { check, retry } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { FileRef, nextTestSetup } from 'e2e-utils'
 import path from 'path'
 import { createSandbox } from 'development-sandbox'
@@ -81,7 +81,9 @@ describe('Error overlay - editor links', () => {
 
     await session.assertHasRedbox()
     await clickSourceFile(browser)
-    await check(() => editorRequestsCount, /1/)
+    await retry(async () => {
+      expect(editorRequestsCount).toBe(1)
+    })
   })
   ;(process.env.IS_TURBOPACK_TEST ? describe.skip : describe)(
     'opening links in import traces',
@@ -124,7 +126,9 @@ describe('Error overlay - editor links', () => {
 
         await session.assertHasRedbox()
         await clickImportTraceFiles(browser)
-        await check(() => editorRequestsCount, /4/)
+        await retry(async () => {
+          expect(editorRequestsCount).toBe(4)
+        })
       })
 
       it('should be possible to open import trace files on module not found error', async () => {
@@ -165,7 +169,9 @@ describe('Error overlay - editor links', () => {
 
         await session.assertHasRedbox()
         await clickImportTraceFiles(browser)
-        await check(() => editorRequestsCount, /3/)
+        await retry(async () => {
+          expect(editorRequestsCount).toBe(3)
+        })
       })
     }
   )

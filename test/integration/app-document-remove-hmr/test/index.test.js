@@ -3,7 +3,7 @@
 import fs from 'fs-extra'
 import { join } from 'path'
 import webdriver from 'next-webdriver'
-import { killApp, findPort, launchApp, check } from 'next-test-utils'
+import { killApp, findPort, launchApp, retry } from 'next-test-utils'
 
 const appDir = join(__dirname, '../')
 const appPage = join(appDir, 'pages/_app.js')
@@ -30,12 +30,11 @@ describe('_app removal HMR', () => {
 
       await fs.rename(appPage, appPage + '.bak')
 
-      await check(async () => {
+      await retry(async () => {
         const html = await browser.eval('document.documentElement.innerHTML')
-        return html.includes('index page') && !html.includes('custom _app')
-          ? 'success'
-          : html
-      }, 'success')
+        expect(html.includes('index page')).toBe(true)
+        expect(html.includes('custom _app')).toBe(false)
+      })
 
       await fs.writeFile(
         indexPage,
@@ -46,23 +45,19 @@ describe('_app removal HMR', () => {
       `
       )
 
-      await check(async () => {
+      await retry(async () => {
         const html = await browser.eval('document.documentElement.innerHTML')
-        return html.includes('index page updated') &&
-          !html.includes('custom _app')
-          ? 'success'
-          : html
-      }, 'success')
+        expect(html.includes('index page updated')).toBe(true)
+        expect(html.includes('custom _app')).toBe(false)
+      })
 
       await fs.rename(appPage + '.bak', appPage)
 
-      await check(async () => {
+      await retry(async () => {
         const html = await browser.eval('document.documentElement.innerHTML')
-        return html.includes('index page updated') &&
-          html.includes('custom _app')
-          ? 'success'
-          : html
-      }, 'success')
+        expect(html.includes('index page updated')).toBe(true)
+        expect(html.includes('custom _app')).toBe(true)
+      })
     } finally {
       await fs.writeFile(indexPage, indexContent)
 
@@ -82,12 +77,11 @@ describe('_app removal HMR', () => {
 
       await fs.rename(documentPage, documentPage + '.bak')
 
-      await check(async () => {
+      await retry(async () => {
         const html = await browser.eval('document.documentElement.innerHTML')
-        return html.includes('index page') && !html.includes('custom _document')
-          ? 'success'
-          : html
-      }, 'success')
+        expect(html.includes('index page')).toBe(true)
+        expect(html.includes('custom _document')).toBe(false)
+      })
 
       await fs.writeFile(
         indexPage,
@@ -98,23 +92,19 @@ describe('_app removal HMR', () => {
       `
       )
 
-      await check(async () => {
+      await retry(async () => {
         const html = await browser.eval('document.documentElement.innerHTML')
-        return html.includes('index page updated') &&
-          !html.includes('custom _document')
-          ? 'success'
-          : html
-      }, 'success')
+        expect(html.includes('index page updated')).toBe(true)
+        expect(html.includes('custom _document')).toBe(false)
+      })
 
       await fs.rename(documentPage + '.bak', documentPage)
 
-      await check(async () => {
+      await retry(async () => {
         const html = await browser.eval('document.documentElement.innerHTML')
-        return html.includes('index page updated') &&
-          html.includes('custom _document')
-          ? 'success'
-          : html
-      }, 'success')
+        expect(html.includes('index page updated')).toBe(true)
+        expect(html.includes('custom _document')).toBe(true)
+      })
     } finally {
       await fs.writeFile(indexPage, indexContent)
 

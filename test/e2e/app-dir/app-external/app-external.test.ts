@@ -1,10 +1,5 @@
 import { nextTestSetup } from 'e2e-utils'
-import {
-  assertNoRedbox,
-  check,
-  retry,
-  shouldRunTurboDevTest,
-} from 'next-test-utils'
+import { assertNoRedbox, retry, shouldRunTurboDevTest } from 'next-test-utils'
 
 async function resolveStreamResponse(response: any, onData?: any) {
   let result = ''
@@ -294,12 +289,11 @@ describe('app dir - external dependency', () => {
       const browser = await next.browser('/optout/action')
       expect(await browser.elementByCss('#dual-pkg-outout p').text()).toBe('')
 
-      browser.elementByCss('#dual-pkg-outout button').click()
-      await check(async () => {
+      await browser.elementByCss('#dual-pkg-outout button').click()
+      await retry(async () => {
         const text = await browser.elementByCss('#dual-pkg-outout p').text()
         expect(text).toBe('dual-pkg-optout:mjs')
-        return 'success'
-      }, /success/)
+      })
     })
 
     it('should compile server actions from node_modules in client components', async () => {
@@ -308,10 +302,9 @@ describe('app dir - external dependency', () => {
       const browser = await next.browser('/action/client')
       await browser.elementByCss('#action').click()
 
-      await check(() => {
+      await retry(async () => {
         expect(next.cliOutput).toContain('action-log:server:action1')
-        return 'success'
-      }, /success/)
+      })
     })
   })
 

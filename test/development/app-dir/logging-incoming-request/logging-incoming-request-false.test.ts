@@ -23,7 +23,7 @@ describe('logging-incoming-request', () => {
     expect(response.status).toBe(200)
 
     // Wait for GET /foo to be logged
-    await retry(() => {
+    await retry(async () => {
       expect(next.cliOutput).not.toContain('GET /foo')
     })
 

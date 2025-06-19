@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { nextTestSetup } from 'e2e-utils'
-import { check, retry } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 
 describe('asset-prefix', () => {
   const { next } = nextTestSetup({
@@ -13,13 +13,13 @@ describe('asset-prefix', () => {
 
     expect(await browser.elementByCss('#text').text()).toBe('Hello World')
 
-    await check(async () => {
+    await retry(async () => {
       const logs = await browser.log()
       const hasError = logs.some((log) =>
         log.message.includes('Failed to fetch')
       )
-      return hasError ? 'error' : 'success'
-    }, 'success')
+      expect(hasError).toBe(false)
+    })
 
     expect(await browser.eval(`window.__v`)).toBe(1)
   })

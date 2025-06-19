@@ -1,4 +1,4 @@
-import { assertNoRedbox, check, retry } from 'next-test-utils'
+import { assertNoRedbox, retry } from 'next-test-utils'
 import stripAnsi from 'strip-ansi'
 import { nextTestSetup } from 'e2e-utils'
 
@@ -28,7 +28,7 @@ describe('middleware - development errors', () => {
     it('logs the error correctly', async () => {
       await next.fetch('/')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stripAnsi(next.cliOutput)).toContain('boom')
       })
       expect(stripAnsi(next.cliOutput)).toContain(
@@ -109,7 +109,7 @@ describe('middleware - development errors', () => {
     it('logs the error correctly', async () => {
       await next.fetch('/')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stripAnsi(next.cliOutput)).toContain(
           'unhandledRejection: Error: async boom!'
         )
@@ -158,7 +158,7 @@ describe('middleware - development errors', () => {
     it('logs the error correctly', async () => {
       await next.fetch('/')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stripAnsi(next.cliOutput)).toContain('Dynamic Code Evaluation')
       })
       if (isTurbopack) {
@@ -261,7 +261,7 @@ describe('middleware - development errors', () => {
     it('logs the error correctly', async () => {
       await next.fetch('/')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stripAnsi(next.cliOutput)).toContain(`Error: booooom!`)
       })
       expect(stripAnsi(next.cliOutput)).toContain(
@@ -347,10 +347,11 @@ describe('middleware - development errors', () => {
 
     it('logs the error correctly', async () => {
       await next.fetch('/')
-      await check(
-        () => stripAnsi(next.cliOutput),
-        new RegExp(`unhandledRejection: Error: you shall see me`, 'm')
-      )
+      await retry(async () => {
+        expect(stripAnsi(next.cliOutput)).toMatch(
+          new RegExp(`unhandledRejection: Error: you shall see me`, 'm')
+        )
+      })
       // expect(output).not.toContain(
       //   'webpack-internal:///(middleware)/./middleware.js'
       // )
@@ -382,13 +383,14 @@ describe('middleware - development errors', () => {
     it('logs the error correctly', async () => {
       await next.fetch('/')
       const output = stripAnsi(next.cliOutput)
-      await check(
-        () => stripAnsi(next.cliOutput),
-        new RegExp(
-          ` uncaughtException: Error: This file asynchronously fails while loading`,
-          'm'
+      await retry(async () => {
+        expect(stripAnsi(next.cliOutput)).toMatch(
+          new RegExp(
+            ` uncaughtException: Error: This file asynchronously fails while loading`,
+            'm'
+          )
         )
-      )
+      })
       expect(output).not.toContain(
         'webpack-internal:///(middleware)/./middleware.js'
       )
@@ -410,14 +412,12 @@ describe('middleware - development errors', () => {
 
     it('logs the error correctly', async () => {
       await next.fetch('/')
-      await check(async () => {
+      await retry(async () => {
         expect(next.cliOutput).toContain(`Expected '{', got '}'`)
         expect(
           next.cliOutput.split(`Expected '{', got '}'`).length
         ).toBeGreaterThanOrEqual(2)
-
-        return 'success'
-      }, 'success')
+      })
     })
 
     it('renders the error correctly and recovers', async () => {
@@ -473,13 +473,12 @@ describe('middleware - development errors', () => {
       await next.patchFile('middleware.js', `export default function () }`)
       await next.fetch('/')
 
-      await check(() => {
+      await retry(async () => {
         expect(next.cliOutput).toContain(`Expected '{', got '}'`)
         expect(
           next.cliOutput.split(`Expected '{', got '}'`).length
         ).toBeGreaterThanOrEqual(2)
-        return 'success'
-      }, 'success')
+      })
     })
 
     it('renders the error correctly and recovers', async () => {

@@ -1,12 +1,12 @@
 import { nextTestSetup } from 'e2e-utils'
 import {
-  check,
   getTitle,
   createDomMatcher,
   createMultiHtmlMatcher,
   createMultiDomMatcher,
   checkMetaNameContentPair,
   checkLink,
+  retry,
 } from 'next-test-utils'
 import fs from 'fs/promises'
 import path from 'path'
@@ -304,10 +304,11 @@ describe('app dir - metadata', () => {
       await checkMetaNameContentPair(browser, 'keywords', 'parent,child')
 
       await browser.loadPage(next.url + '/dynamic/blog?q=xxx')
-      await check(
-        () => browser.elementByCss('p').text(),
-        /params - blog query - xxx/
-      )
+      await retry(async () => {
+        expect(await browser.elementByCss('p').text()).toMatch(
+          /params - blog query - xxx/
+        )
+      })
     })
 
     it('should handle metadataBase for urls resolved as only URL type', async () => {
@@ -809,9 +810,18 @@ describe('app dir - metadata', () => {
         .waitForElementByCss('#value')
       const value = await browser.elementByCss('#value').text()
       const value2 = await browser.elementByCss('#value2').text()
-      // Value in the title should match what's shown on the page component
-      const title = await browser.eval(`document.title`)
-      const obj = JSON.parse(title)
+
+      // Wait for the title to be updated with valid JSON
+      let obj
+      await retry(async () => {
+        const title = await browser.eval(`document.title`)
+        try {
+          obj = JSON.parse(title)
+        } catch (e) {
+          throw new Error(`Title is not valid JSON yet: "${title}"`)
+        }
+      })
+
       // Check `cache()`
       expect(obj.val.toString()).toBe(value)
       // Check `fetch()`
@@ -841,11 +851,11 @@ describe('app dir - metadata', () => {
             'app/icons/static/icon2.png'
           )
 
-          await check(async () => {
+          await retry(async () => {
             const $ = await next.render$('/icons/static')
             const $icon = $('link[rel="icon"][type!="image/x-icon"]')
-            return $icon.attr('href')
-          }, /\/icons\/static\/icon2/)
+            expect($icon.attr('href')).toMatch(/\/icons\/static\/icon2/)
+          })
 
           await next.renameFile(
             'app/icons/static/icon2.png',

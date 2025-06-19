@@ -15,8 +15,8 @@ import {
   nextBuild,
   nextStart,
   normalizeRegEx,
-  check,
   getRedboxHeader,
+  retry,
 } from 'next-test-utils'
 import cheerio from 'cheerio'
 import escapeRegex from 'escape-string-regexp'
@@ -140,21 +140,20 @@ function runTests({ dev }) {
         })
       })()`)
       const curFrames = [...(await browser.websocketFrames())]
-      await check(async () => {
+      await retry(async () => {
         const frames = await browser.websocketFrames()
         const newFrames = frames.slice(curFrames.length)
         // console.error({newFrames, curFrames, frames});
 
-        return newFrames.some((frame) => {
+        const hasPongFrame = newFrames.some((frame) => {
           try {
             const data = JSON.parse(frame.payload)
             return data.event === 'pong'
           } catch (_) {}
           return false
         })
-          ? 'success'
-          : JSON.stringify(newFrames)
-      }, 'success')
+        expect(hasPongFrame).toBe(true)
+      })
       expect(await browser.eval('window.uncaughtErrs.length')).toBe(0)
     })
   }
@@ -244,7 +243,9 @@ function runTests({ dev }) {
 
       await browser.eval('window.beforeNav = 1')
       await browser.elementByCss(`#${id}`).click()
-      await check(() => browser.eval('window.location.pathname'), pathname)
+      await retry(async () => {
+        expect(await browser.eval('window.location.pathname')).toBe(pathname)
+      })
 
       expect(JSON.parse(await browser.elementByCss('#query').text())).toEqual(
         navQuery
@@ -1007,10 +1008,10 @@ function runTests({ dev }) {
     expect(html).toMatch(/onmpost:.*pending/)
 
     const browser = await webdriver(appPort, '/on-mount/post-1')
-    await check(
-      () => browser.eval(`document.body.innerHTML`),
-      /onmpost:.*post-1/
-    )
+    await retry(async () => {
+      const content = await browser.eval(`document.body.innerHTML`)
+      expect(content).toMatch(/onmpost:.*post-1/)
+    })
   })
 
   it('should not have placeholder query values for SSS', async () => {
@@ -1020,19 +1021,19 @@ function runTests({ dev }) {
 
   it('should update with a hash in the URL', async () => {
     const browser = await webdriver(appPort, '/on-mount/post-1#abc')
-    await check(
-      () => browser.eval(`document.body.innerHTML`),
-      /onmpost:.*post-1/
-    )
+    await retry(async () => {
+      const content = await browser.eval(`document.body.innerHTML`)
+      expect(content).toMatch(/onmpost:.*post-1/)
+    })
   })
 
   it('should scroll to a hash on mount', async () => {
     const browser = await webdriver(appPort, '/on-mount/post-1#item-400')
 
-    await check(
-      () => browser.eval(`document.body.innerHTML`),
-      /onmpost:.*post-1/
-    )
+    await retry(async () => {
+      const content = await browser.eval(`document.body.innerHTML`)
+      expect(content).toMatch(/onmpost:.*post-1/)
+    })
 
     const elementPosition = await browser.eval(
       `document.querySelector("#item-400").getBoundingClientRect().y`
@@ -1156,7 +1157,7 @@ function runTests({ dev }) {
         }
       `
       )
-      await check(async () => {
+      await retry(async () => {
         const response = await fetchViaHTTP(
           appPort,
           '/_next/static/development/_devPagesManifest.json',
@@ -1174,16 +1175,16 @@ function runTests({ dev }) {
         const contents = await response.text()
         const containsAddedLater = contents.includes('added-later')
 
-        return containsAddedLater ? 'success' : 'fail'
-      }, 'success')
+        expect(containsAddedLater).toBe(true)
+      })
 
-      await check(async () => {
+      await retry(async () => {
         const contents = await renderViaHTTP(
           appPort,
           '/_next/static/development/_devPagesManifest.json'
         )
-        return contents.includes('added-later') ? 'success' : 'fail'
-      }, 'success')
+        expect(contents).toContain('added-later')
+      })
 
       await browser.elementByCss('#added-later-link').click()
       await browser.waitForElementByCss('#added-later')

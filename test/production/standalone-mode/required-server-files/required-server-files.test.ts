@@ -6,7 +6,6 @@ import { nanoid } from 'nanoid'
 import { createNext, FileRef } from 'e2e-utils'
 import { NextInstance } from 'e2e-utils'
 import {
-  check,
   createNowRouteMatches,
   fetchViaHTTP,
   findPort,
@@ -207,7 +206,9 @@ describe('required server files', () => {
       })
 
       expect(res.status).toBe(500)
-      await check(() => stderr, /Invariant: failed to load static page/)
+      await retry(async () => {
+        expect(stderr).toMatch(/Invariant: failed to load static page/)
+      })
     } finally {
       await next.renameFile(`${toRename}.bak`, toRename)
     }
@@ -350,10 +351,11 @@ describe('required server files', () => {
     'should warn when "next" is imported directly',
     async () => {
       await renderViaHTTP(appPort, '/gssp')
-      await check(
-        () => stderr,
-        /"next" should not be imported directly, imported in/
-      )
+      await retry(async () => {
+        expect(stderr).toMatch(
+          /"next" should not be imported directly, imported in/
+        )
+      })
     }
   )
 
@@ -1061,7 +1063,7 @@ describe('required server files', () => {
     expect(res.status).toBe(500)
     expect(await res.text()).toBe('Internal Server Error')
 
-    await retry(() => {
+    await retry(async () => {
       expect(errors.join('\n')).toInclude('gip hit an oops')
     })
   })
@@ -1071,7 +1073,7 @@ describe('required server files', () => {
     expect(res.status).toBe(500)
     expect(await res.text()).toBe('Internal Server Error')
 
-    await retry(() => {
+    await retry(async () => {
       expect(errors.join('\n')).toInclude('gssp hit an oops')
     })
   })
@@ -1081,7 +1083,7 @@ describe('required server files', () => {
     expect(res.status).toBe(500)
     expect(await res.text()).toBe('Internal Server Error')
 
-    await retry(() => {
+    await retry(async () => {
       expect(errors.join('\n')).toInclude('gsp hit an oops')
     })
   })
@@ -1091,7 +1093,7 @@ describe('required server files', () => {
     expect(res.status).toBe(500)
     expect(await res.text()).toBe('Internal Server Error')
 
-    await retry(() => {
+    await retry(async () => {
       expect(errors.join('\n')).toInclude('some error from /api/error')
     })
   })

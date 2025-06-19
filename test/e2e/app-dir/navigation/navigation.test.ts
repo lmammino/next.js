@@ -15,8 +15,8 @@ describe('app dir - navigation', () => {
 
       await browser.elementById('set-query').click()
 
-      await retry(() =>
-        expect(browser.elementById('query').text()).resolves.toEqual('a=b&c=d')
+      await retry(async () =>
+        expect(await browser.elementById('query').text()).toEqual('a=b&c=d')
       )
 
       const url = new URL(await browser.url())
@@ -26,8 +26,8 @@ describe('app dir - navigation', () => {
     it('should set query with semicolon correctly', async () => {
       const browser = await next.browser('/redirect/semicolon')
 
-      await retry(() =>
-        expect(browser.elementById('query').text()).resolves.toEqual('a=b%3Bc')
+      await retry(async () =>
+        expect(await browser.elementById('query').text()).toEqual('a=b%3Bc')
       )
 
       const url = new URL(await browser.url())
@@ -168,8 +168,8 @@ describe('app dir - navigation', () => {
       ) => {
         await browser.elementByCss(`#link-to-${val.toString()}`).click()
 
-        await retry(() =>
-          expect(browser.eval('window.pageYOffset')).resolves.toEqual(
+        await retry(async () =>
+          expect(await browser.eval('window.pageYOffset')).toEqual(
             expectedScroll
           )
         )
@@ -224,8 +224,8 @@ describe('app dir - navigation', () => {
         expectedScroll: number
       ) => {
         await browser.elementByCss(`#link-to-${val.toString()}`).click()
-        await retry(() =>
-          expect(browser.eval('window.pageYOffset')).resolves.toEqual(
+        await retry(async () =>
+          expect(await browser.eval('window.pageYOffset')).toEqual(
             expectedScroll
           )
         )
@@ -250,8 +250,8 @@ describe('app dir - navigation', () => {
         expectedScroll: number
       ) => {
         await browser.elementByCss(`#link-to-${val.toString()}`).click()
-        await retry(() =>
-          expect(browser.eval('window.pageYOffset')).resolves.toEqual(
+        await retry(async () =>
+          expect(await browser.eval('window.pageYOffset')).toEqual(
             expectedScroll
           )
         )
@@ -272,8 +272,8 @@ describe('app dir - navigation', () => {
         // Wait for hash-link-back-to-same-page to load
         .waitForElementByCss('#to-other-page')
 
-      await retry(() =>
-        expect(browser.eval('window.pageYOffset')).resolves.toEqual(0)
+      await retry(async () =>
+        expect(await browser.eval('window.pageYOffset')).toEqual(0)
       )
     })
   })
@@ -285,8 +285,8 @@ describe('app dir - navigation', () => {
       const browser = await next.browser(pathname)
       await browser.elementByCss('#link-to-h1-hash-only').click()
 
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(next.url + pathname + '#h1')
+      await retry(async () =>
+        expect(await browser.url()).toEqual(next.url + pathname + '#h1')
       )
     })
 
@@ -294,8 +294,8 @@ describe('app dir - navigation', () => {
       const browser = await next.browser(pathname)
       await browser.elementByCss('#button-to-h3-hash-only').click()
 
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(next.url + pathname + '#h3')
+      await retry(async () =>
+        expect(await browser.url()).toEqual(next.url + pathname + '#h3')
       )
     })
 
@@ -303,8 +303,8 @@ describe('app dir - navigation', () => {
       const browser = await next.browser(pathname)
       await browser.elementByCss('#link-to-dummy-query').click()
 
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(
+      await retry(async () =>
+        expect(await browser.url()).toEqual(
           next.url + pathname + '?foo=1&bar=2'
         )
       )
@@ -314,40 +314,36 @@ describe('app dir - navigation', () => {
       const browser = await next.browser(pathname)
       await browser.elementByCss('#link-to-h2-with-hash-and-query').click()
 
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(
-          next.url + pathname + '?here=ok#h2'
-        )
+      await retry(async () =>
+        expect(await browser.url()).toEqual(next.url + pathname + '?here=ok#h2')
       )
 
       // Only update hash
       await browser.elementByCss('#link-to-h1-hash-only').click()
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(
-          next.url + pathname + '?here=ok#h1'
-        )
+      await retry(async () =>
+        expect(await browser.url()).toEqual(next.url + pathname + '?here=ok#h1')
       )
 
       // Replace all with new query
       await browser.elementByCss('#link-to-dummy-query').click()
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(
+      await retry(async () =>
+        expect(await browser.url()).toEqual(
           next.url + pathname + '?foo=1&bar=2'
         )
       )
 
       // Add hash to existing query
       await browser.elementByCss('#link-to-h1-hash-only').click()
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(
+      await retry(async () =>
+        expect(await browser.url()).toEqual(
           next.url + pathname + '?foo=1&bar=2#h1'
         )
       )
 
       // Update hash again via `router.push(...)`
       await browser.elementByCss('#button-to-h3-hash-only').click()
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(
+      await retry(async () =>
+        expect(await browser.url()).toEqual(
           next.url + pathname + '?foo=1&bar=2#h3'
         )
       )
@@ -679,8 +675,8 @@ describe('app dir - navigation', () => {
         .elementByCss('#link-to-pages-router')
         .click()
         .waitForElementByCss('#link-to-app')
-      await retry(() =>
-        expect(browser.url()).resolves.toEqual(next.url + '/some#non-existent')
+      await retry(async () =>
+        expect(await browser.url()).toEqual(next.url + '/some#non-existent')
       )
     })
 

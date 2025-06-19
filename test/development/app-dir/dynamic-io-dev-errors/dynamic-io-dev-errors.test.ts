@@ -60,7 +60,7 @@ describe('Dynamic IO Dev Errors', () => {
     const res = await next.fetch('/top-level-error')
     expect(res.status).toBe(500)
 
-    await retry(() => {
+    await retry(async () => {
       const cliOutput = stripAnsi(next.cliOutput.slice(cliOutputLength))
       expect(cliOutput).toContain('GET /top-level-error 500')
     })
@@ -75,7 +75,7 @@ describe('Dynamic IO Dev Errors', () => {
     const outputIndex = next.cliOutput.length
     const browser = await next.browser('/no-accessed-data')
 
-    await retry(() => {
+    await retry(async () => {
       expect(next.cliOutput.slice(outputIndex)).toContain(
         'Error: Route "/no-accessed-data"'
       )

@@ -2,7 +2,7 @@
 
 import { join } from 'path'
 import webdriver from 'next-webdriver'
-import { nextBuild, nextStart, findPort, killApp, check } from 'next-test-utils'
+import { nextBuild, nextStart, findPort, killApp, retry } from 'next-test-utils'
 
 const appDir = join(__dirname, '..')
 let app
@@ -30,11 +30,10 @@ describe('Failing to load _error', () => {
         await browser.eval(`window.beforeNavigate = true`)
         await browser.elementByCss('#to-broken').click()
 
-        await check(async () => {
-          return !(await browser.eval('window.beforeNavigate'))
-            ? 'reloaded'
-            : 'fail'
-        }, /reloaded/)
+        await retry(async () => {
+          const beforeNavigate = await browser.eval('window.beforeNavigate')
+          expect(beforeNavigate).toBeFalsy()
+        })
       })
     }
   )

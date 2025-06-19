@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { createSandbox } from 'development-sandbox'
 import { FileRef, nextTestSetup } from 'e2e-utils'
-import { check } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import path from 'path'
 import { outdent } from 'outdent'
 
@@ -118,10 +118,11 @@ describe('Error recovery app', () => {
 
     await session.assertNoRedbox()
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      /Count: 1/
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toMatch(/Count: 1/)
+    })
   })
 
   test('server component can recover from syntax error', async () => {
@@ -181,10 +182,11 @@ describe('Error recovery app', () => {
         `
     )
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      'Hello world 2'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('Hello world 2')
+    })
   })
 
   test('client component can recover from syntax error', async () => {
@@ -245,10 +247,11 @@ describe('Error recovery app', () => {
         `
     )
 
-    await check(
-      () => session.evaluate(() => document.querySelector('p').textContent),
-      'Hello world 2'
-    )
+    await retry(async () => {
+      expect(
+        await session.evaluate(() => document.querySelector('p').textContent)
+      ).toBe('Hello world 2')
+    })
   })
 
   test('can recover from a event handler error', async () => {

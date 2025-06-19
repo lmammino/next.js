@@ -1,4 +1,4 @@
-import { check } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { join } from 'path'
 import { createNextApp, projectFilesShouldExist, useTempDir } from './utils'
 
@@ -160,7 +160,9 @@ describe('create-next-app prompts', () => {
         // cursor forward, choose 'Yes' for custom import alias
         childProcess.stdin.write('\u001b[C\n')
         // used check here since it needs to wait for the prompt
-        await check(() => output, /What import alias would you like configured/)
+        await retry(async () => {
+          expect(output).toMatch(/What import alias would you like configured/)
+        })
         childProcess.stdin.write('@/something/*\n')
       })
 
@@ -236,16 +238,16 @@ describe('create-next-app prompts', () => {
           output += data
           process.stdout.write(data)
         })
-        await check(
-          () => output,
-          /Would you like to reset the saved preferences/
-        )
+        await retry(async () => {
+          expect(output).toMatch(
+            /Would you like to reset the saved preferences/
+          )
+        })
         // cursor forward, choose 'Yes' for reset preferences
         childProcess.stdin.write('\u001b[C\n')
-        await check(
-          () => output,
-          /The preferences have been reset successfully/
-        )
+        await retry(async () => {
+          expect(output).toMatch(/The preferences have been reset successfully/)
+        })
       })
     })
   })

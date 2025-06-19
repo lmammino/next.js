@@ -3,7 +3,6 @@
 import {
   assertHasRedbox,
   assertNoRedbox,
-  check,
   findPort,
   getRedboxHeader,
   killApp,
@@ -11,6 +10,7 @@ import {
   nextBuild,
   nextStart,
   waitFor,
+  retry,
 } from 'next-test-utils'
 import webdriver from 'next-webdriver'
 import { join } from 'path'
@@ -58,17 +58,12 @@ function runTests(mode) {
     try {
       browser = await webdriver(appPort, '/docs')
 
-      await check(async () => {
+      await retry(async () => {
         const result = await browser.eval(
           `document.getElementById('basic-image').naturalWidth`
         )
-
-        if (result === 0) {
-          throw new Error('Incorrectly loaded image')
-        }
-
-        return 'result-correct'
-      }, /result-correct/)
+        expect(result).not.toBe(0)
+      })
 
       expect(
         await hasImageMatchingUrl(
@@ -88,17 +83,19 @@ function runTests(mode) {
     try {
       browser = await webdriver(appPort, '/docs/update')
 
-      await check(
-        () => browser.eval(`document.getElementById("update-image").src`),
-        /test\.jpg/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval(`document.getElementById("update-image").src`)
+        ).toMatch(/test\.jpg/)
+      })
 
       await browser.eval(`document.getElementById("toggle").click()`)
 
-      await check(
-        () => browser.eval(`document.getElementById("update-image").src`),
-        /test\.png/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval(`document.getElementById("update-image").src`)
+        ).toMatch(/test\.png/)
+      })
     } finally {
       if (browser) {
         await browser.close()
@@ -110,16 +107,12 @@ function runTests(mode) {
     let browser
     try {
       browser = await webdriver(appPort, '/docs/flex')
-      await check(async () => {
+      await retry(async () => {
         const result = await browser.eval(
           `document.getElementById('basic-image').width`
         )
-        if (result === 0) {
-          throw new Error('Incorrectly loaded image')
-        }
-
-        return 'result-correct'
-      }, /result-correct/)
+        expect(result).not.toBe(0)
+      })
     } finally {
       if (browser) {
         await browser.close()
@@ -133,9 +126,11 @@ function runTests(mode) {
 
       await assertNoRedbox(browser)
 
-      await check(async () => {
-        return (await browser.log()).map((log) => log.message).join('\n')
-      }, /Image is missing required "src" property/gm)
+      await retry(async () => {
+        expect(
+          (await browser.log()).map((log) => log.message).join('\n')
+        ).toMatch(/Image is missing required "src" property/gm)
+      })
     })
 
     it('should show invalid src error', async () => {
@@ -168,17 +163,14 @@ function runTests(mode) {
       const id = 'prose-image'
 
       // Wait for image to load:
-      await check(async () => {
+      await retry(async () => {
         const result = await browser.eval(
           `document.getElementById(${JSON.stringify(id)}).naturalWidth`
         )
-
         if (result < 1) {
           throw new Error('Image not ready')
         }
-
-        return 'result-correct'
-      }, /result-correct/)
+      })
 
       await waitFor(1000)
 

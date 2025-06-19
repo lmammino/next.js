@@ -1,6 +1,6 @@
 import webdriver from 'next-webdriver'
 import { nextTestSetup } from 'e2e-utils'
-import { check, renderViaHTTP } from 'next-test-utils'
+import { renderViaHTTP, retry } from 'next-test-utils'
 
 describe('basePath', () => {
   const basePath = '/docs'
@@ -19,31 +19,35 @@ describe('basePath', () => {
   describe('client-side navigation', () => {
     it('should navigate to /404 correctly client-side', async () => {
       const browser = await webdriver(next.url, `${basePath}/slug-1`)
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /slug-1/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/slug-1/)
+      })
 
       await browser.eval('next.router.push("/404", "/slug-2")')
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /page could not be found/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/page could not be found/)
+      })
       expect(await browser.eval('location.pathname')).toBe(`${basePath}/slug-2`)
     })
 
     it('should navigate to /_error correctly client-side', async () => {
       const browser = await webdriver(next.url, `${basePath}/slug-1`)
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /slug-1/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/slug-1/)
+      })
 
       await browser.eval('next.router.push("/_error", "/slug-2")')
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /page could not be found/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/page could not be found/)
+      })
       expect(await browser.eval('location.pathname')).toBe(`${basePath}/slug-2`)
     })
   })
@@ -100,10 +104,11 @@ describe('basePath', () => {
     await browser.eval(() => (window as any).next.router.push('/hello'))
     await browser.waitForElementByCss('#pathname')
     await browser.back()
-    await check(
-      () => browser.eval(() => window.location.pathname),
-      `${basePath}hello`
-    )
+    await retry(async () => {
+      expect(await browser.eval(() => window.location.pathname)).toBe(
+        `${basePath}hello`
+      )
+    })
     expect(await browser.eval(() => (window as any).next.router.asPath)).toBe(
       `${basePath}hello`
     )
@@ -121,16 +126,15 @@ describe('basePath', () => {
       await browser.eval('window.beforeNav = "hi"')
       await browser.elementByCss('#other-page-link').click()
 
-      await check(() => browser.eval('window.beforeNav'), {
-        test(content) {
-          return content !== 'hi'
-        },
+      await retry(async () => {
+        expect(await browser.eval('window.beforeNav')).not.toEqual('hi')
       })
 
-      await check(
-        () => browser.eval('document.documentElement.innerHTML'),
-        /This page could not be found/
-      )
+      await retry(async () => {
+        expect(
+          await browser.eval('document.documentElement.innerHTML')
+        ).toMatch(/This page could not be found/)
+      })
     })
 
     it('should 404 when manually adding basePath with router.push', async () => {
@@ -138,10 +142,8 @@ describe('basePath', () => {
       await browser.eval('window.beforeNav = "hi"')
       await browser.eval(`window.next.router.push("${basePath}/other-page")`)
 
-      await check(() => browser.eval('window.beforeNav'), {
-        test(content) {
-          return content !== 'hi'
-        },
+      await retry(async () => {
+        expect(await browser.eval('window.beforeNav')).not.toEqual('hi')
       })
 
       const html = await browser.eval('document.documentElement.innerHTML')
@@ -153,10 +155,8 @@ describe('basePath', () => {
       await browser.eval('window.beforeNav = "hi"')
       await browser.eval(`window.next.router.replace("${basePath}/other-page")`)
 
-      await check(() => browser.eval('window.beforeNav'), {
-        test(content) {
-          return content !== 'hi'
-        },
+      await retry(async () => {
+        expect(await browser.eval('window.beforeNav')).not.toEqual('hi')
       })
 
       const html = await browser.eval('document.documentElement.innerHTML')

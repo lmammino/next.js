@@ -11,7 +11,7 @@ describe('ppr', () => {
   })
 
   it('should indicate the feature is experimental', async () => {
-    await retry(() => {
+    await retry(async () => {
       expect(next.cliOutput).toContain('Experiments (use with caution)')
       expect(stripAnsi(next.cliOutput)).toContain('✓ ppr')
     })

@@ -3,9 +3,9 @@ import { NextInstance } from 'e2e-utils'
 import {
   assertHasRedbox,
   assertNoRedbox,
-  check,
   renderViaHTTP,
   getRedboxSource,
+  retry,
 } from 'next-test-utils'
 import cheerio from 'cheerio'
 import { join } from 'path'
@@ -113,13 +113,17 @@ describe('jsconfig-path-reloading', () => {
       } finally {
         await next.patchFile(indexPage, indexContent)
         await next.patchFile(tsConfigFile, tsconfigContent)
-        await check(async () => {
+
+        // Refresh the browser to get the restored content
+        await browser.refresh()
+
+        await retry(async () => {
           const html3 = await browser.eval('document.documentElement.innerHTML')
-          return html3.includes('id="first-data"') &&
-            !html3.includes('second-data')
-            ? 'success'
-            : html3
-        }, 'success')
+          expect(html3).toContain('id="first-data"')
+          expect(html3).not.toContain('second-data')
+        })
+
+        await browser.close()
       }
     })
 
@@ -160,24 +164,27 @@ describe('jsconfig-path-reloading', () => {
 
         await assertNoRedbox(browser)
 
-        await check(async () => {
+        await retry(async () => {
           const html2 = await browser.eval('document.documentElement.innerHTML')
           expect(html2).toContain('first button')
           expect(html2).not.toContain('second button')
           expect(html2).toContain('third button')
           expect(html2).toContain('first-data')
-          return 'success'
-        }, 'success')
+        })
       } finally {
         await next.patchFile(indexPage, indexContent)
         await next.patchFile(tsConfigFile, tsconfigContent)
-        await check(async () => {
+
+        // Refresh the browser to get the restored content
+        await browser.refresh()
+
+        await retry(async () => {
           const html3 = await browser.eval('document.documentElement.innerHTML')
-          return html3.includes('first button') &&
-            !html3.includes('third button')
-            ? 'success'
-            : html3
-        }, 'success')
+          expect(html3).toContain('first button')
+          expect(html3).not.toContain('third button')
+        })
+
+        await browser.close()
       }
     })
   }

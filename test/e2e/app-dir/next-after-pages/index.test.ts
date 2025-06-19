@@ -33,7 +33,7 @@ _describe('after() - pages', () => {
     )
 
     expect(res.status).toBe(200)
-    await retry(() => {
+    await retry(async () => {
       expect(getLogs()).toContainEqual({
         source: '[middleware] /middleware/redirect-source',
         requestId,

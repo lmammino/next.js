@@ -1,6 +1,6 @@
 import webdriver, { type Playwright } from 'next-webdriver'
 import { nextTestSetup } from 'e2e-utils'
-import { check, assertNoConsoleErrors, retry } from 'next-test-utils'
+import { assertNoConsoleErrors, retry } from 'next-test-utils'
 
 describe('router autoscrolling on navigation', () => {
   const { next, isNextDev } = nextTestSetup({
@@ -186,7 +186,9 @@ describe('router autoscrolling on navigation', () => {
         .elementByCss('#to-invisible-first-element')
         .click()
         .waitForElementByCss('#content-that-is-visible')
-      await check(() => browser.eval('window.scrollY'), 0)
+      await retry(async () => {
+        expect(await browser.eval('window.scrollY')).toBe(0)
+      })
     })
 
     it('Should scroll to the top of the layout when the first child is position fixed', async () => {
@@ -196,11 +198,13 @@ describe('router autoscrolling on navigation', () => {
         .elementByCss('#to-fixed-first-element')
         .click()
         .waitForElementByCss('#content-that-is-visible')
-      await check(() => browser.eval('window.scrollY'), 0)
+      await retry(async () => {
+        expect(await browser.eval('window.scrollY')).toBe(0)
+      })
 
       if (isNextDev) {
         // Check that we've logged a warning
-        await check(async () => {
+        await retry(async () => {
           const logs = await browser.log()
           return logs.some((log) =>
             log.message.includes(
@@ -209,7 +213,7 @@ describe('router autoscrolling on navigation', () => {
           )
             ? 'success'
             : undefined
-        }, 'success')
+        })
       }
     })
 
@@ -220,11 +224,13 @@ describe('router autoscrolling on navigation', () => {
         .elementByCss('#to-sticky-first-element')
         .click()
         .waitForElementByCss('#content-that-is-visible')
-      await check(() => browser.eval('window.scrollY'), 0)
+      await retry(async () => {
+        expect(await browser.eval('window.scrollY')).toBe(0)
+      })
 
       if (isNextDev) {
         // Check that we've logged a warning
-        await check(async () => {
+        await retry(async () => {
           const logs = await browser.log()
           return logs.some((log) =>
             log.message.includes(
@@ -233,7 +239,7 @@ describe('router autoscrolling on navigation', () => {
           )
             ? 'success'
             : undefined
-        }, 'success')
+        })
       }
     })
 
@@ -244,9 +250,13 @@ describe('router autoscrolling on navigation', () => {
         .elementByCss('#to-loading-scroll')
         .click()
         .waitForElementByCss('#loading-component')
-      await check(() => browser.eval('window.scrollY'), 0)
+      await retry(async () => {
+        expect(await browser.eval('window.scrollY')).toBe(0)
+      })
       await browser.waitForElementByCss('#content-that-is-visible')
-      await check(() => browser.eval('window.scrollY'), 0)
+      await retry(async () => {
+        expect(await browser.eval('window.scrollY')).toBe(0)
+      })
     })
   })
 })

@@ -67,7 +67,7 @@ describe('server-side dev errors', () => {
       )
       const browser = await webdriver(appPort, '/gsp')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stderr.slice(stderrIdx)).toContain(
           'ReferenceError: missingVar is not defined'
         )
@@ -118,7 +118,7 @@ describe('server-side dev errors', () => {
       )
       const browser = await webdriver(appPort, '/gssp')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stderr.slice(stderrIdx)).toContain(
           'ReferenceError: missingVar is not defined'
         )
@@ -168,7 +168,7 @@ describe('server-side dev errors', () => {
       )
       const browser = await webdriver(appPort, '/blog/first')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stderr.slice(stderrIdx)).toContain(
           'ReferenceError: missingVar is not defined'
         )
@@ -217,7 +217,7 @@ describe('server-side dev errors', () => {
       )
       const browser = await webdriver(appPort, '/api/hello')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stderr.slice(stderrIdx)).toContain(
           'ReferenceError: missingVar is not defined'
         )
@@ -283,7 +283,7 @@ describe('server-side dev errors', () => {
       )
       const browser = await webdriver(appPort, '/api/blog/first')
 
-      await retry(() => {
+      await retry(async () => {
         expect(stderr.slice(stderrIdx)).toContain(
           'ReferenceError: missingVar is not defined'
         )
@@ -342,7 +342,7 @@ describe('server-side dev errors', () => {
     const stderrIdx = stderr.length
     await webdriver(appPort, '/uncaught-rejection')
 
-    await retry(() => {
+    await retry(async () => {
       expect(stderr.slice(stderrIdx)).toContain('Error: catch this rejection')
     })
 
@@ -421,7 +421,7 @@ describe('server-side dev errors', () => {
     const stderrIdx = stderr.length
     await webdriver(appPort, '/uncaught-empty-rejection')
 
-    await retry(() => {
+    await retry(async () => {
       expect(stderr.slice(stderrIdx)).toContain('Error:')
     })
 
@@ -499,7 +499,7 @@ describe('server-side dev errors', () => {
     const stderrIdx = stderr.length
     await webdriver(appPort, '/uncaught-exception')
 
-    await retry(() => {
+    await retry(async () => {
       expect(stderr.slice(stderrIdx)).toContain('Error:')
     })
 
@@ -577,7 +577,7 @@ describe('server-side dev errors', () => {
     const stderrIdx = stderr.length
     await webdriver(appPort, '/uncaught-empty-exception')
 
-    await retry(() => {
+    await retry(async () => {
       expect(stderr.slice(stderrIdx)).toContain('Error:')
     })
 

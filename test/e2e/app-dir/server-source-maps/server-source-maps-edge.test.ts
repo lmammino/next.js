@@ -23,7 +23,7 @@ describe('app-dir - server source maps edge runtime', () => {
     await next.render('/rsc-error-log')
 
     if (isNextDev) {
-      await retry(() => {
+      await retry(async () => {
         expect(next.cliOutput.slice(outputIndex)).toContain(
           'Error: rsc-error-log'
         )
@@ -52,7 +52,7 @@ describe('app-dir - server source maps edge runtime', () => {
     await next.render('/ssr-throw')
 
     if (isNextDev) {
-      await retry(() => {
+      await retry(async () => {
         expect(next.cliOutput.slice(outputIndex)).toContain('Error: ssr-throw')
       })
 
@@ -82,7 +82,7 @@ describe('app-dir - server source maps edge runtime', () => {
     await next.fetch('/rsc-throw')
 
     if (isNextDev) {
-      await retry(() => {
+      await retry(async () => {
         expect(next.cliOutput.slice(outputIndex)).toMatch(/Error: rsc-throw/)
       })
 

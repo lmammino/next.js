@@ -1,5 +1,5 @@
 import { nextTestSetup } from 'e2e-utils'
-import { check } from 'next-test-utils'
+import { retry } from 'next-test-utils'
 import { Playwright } from 'next-webdriver'
 import {
   browserConfigWithFixedTime,
@@ -30,14 +30,13 @@ describe('app dir client cache with parallel routes', () => {
     it('should prefetch the full page', async () => {
       const { getRequests, clearRequests } =
         await createRequestsListener(browser)
-      await check(() => {
-        return getRequests().some(
+      await retry(async () => {
+        const hasRequest = getRequests().some(
           ([url, didPartialPrefetch]) =>
             getPathname(url) === '/0' && !didPartialPrefetch
         )
-          ? 'success'
-          : 'fail'
-      }, 'success')
+        expect(hasRequest).toBe(true)
+      })
 
       clearRequests()
 

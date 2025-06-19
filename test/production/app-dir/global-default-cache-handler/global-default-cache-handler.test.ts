@@ -87,7 +87,7 @@ describe('global-default-cache-handler', () => {
     const res = await fetchViaHTTP(appPort, '/')
     expect(res.status).toBe(200)
 
-    await retry(() => {
+    await retry(async () => {
       expect(output).toContain('symbol get')
       expect(output).toContain('symbol set')
     })
@@ -97,7 +97,7 @@ describe('global-default-cache-handler', () => {
     const res = await fetchViaHTTP(appPort, '/revalidate-tag', { tag: 'tag1' })
     expect(res.status).toBe(200)
 
-    await retry(() => {
+    await retry(async () => {
       expect(output).toContain('symbol expireTags')
       expect(output).toContain('tag1')
     })

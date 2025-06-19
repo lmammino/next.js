@@ -2,13 +2,13 @@
 
 import { join } from 'path'
 import {
-  check,
   findPort,
   getImagesManifest,
   killApp,
   launchApp,
   nextBuild,
   nextStart,
+  retry,
 } from 'next-test-utils'
 import webdriver from 'next-webdriver'
 
@@ -58,11 +58,13 @@ function runTests(url: string, mode: 'dev' | 'server') {
       `document.getElementById("eager-image").scrollIntoView({behavior: "smooth"})`
     )
 
-    await check(
-      () =>
-        browser.eval(`document.getElementById("external-image").currentSrc`),
-      'https://image-optimization-test.vercel.app/test.jpg'
-    )
+    await retry(async () => {
+      expect(
+        await browser.eval(
+          `document.getElementById("external-image").currentSrc`
+        )
+      ).toBe('https://image-optimization-test.vercel.app/test.jpg')
+    })
 
     expect(
       await browser.elementById('internal-image').getAttribute('src')

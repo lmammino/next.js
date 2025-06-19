@@ -150,7 +150,7 @@ describe('app-dir action size limit invalid config', () => {
       )
 
       if (!isNextDeploy) {
-        await retry(() => {
+        await retry(async () => {
           expect(logs).toContainEqual(
             expect.stringContaining('Error: Body exceeded 2mb limit')
           )
@@ -239,7 +239,7 @@ describe('app-dir action size limit invalid config', () => {
       )
 
       if (!isNextDeploy) {
-        await retry(() => {
+        await retry(async () => {
           expect(logs).toContainEqual(
             expect.stringContaining('Error: Body exceeded 2mb limit')
           )

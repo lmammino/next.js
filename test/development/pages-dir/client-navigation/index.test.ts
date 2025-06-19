@@ -1,11 +1,6 @@
 /* eslint-env jest */
 
-import {
-  waitFor,
-  check,
-  retry,
-  getRedboxTotalErrorCount,
-} from 'next-test-utils'
+import { waitFor, retry, getRedboxTotalErrorCount } from 'next-test-utils'
 import path from 'path'
 import { nextTestSetup } from 'e2e-utils'
 
@@ -447,10 +442,10 @@ describe('Client Navigation', () => {
       window.next.router.push('#third')
     })()`)
 
-    await check(async () => {
+    await retry(async () => {
       const errorCount = await browser.eval('window.routeErrors.length')
-      return errorCount > 0 ? 'success' : errorCount
-    }, 'success')
+      expect(errorCount).toBeGreaterThan(0)
+    })
   })
 
   it('should navigate to paths relative to the current page', async () => {

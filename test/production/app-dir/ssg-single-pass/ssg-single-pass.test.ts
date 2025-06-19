@@ -34,7 +34,7 @@ describe('ssg-single-pass', () => {
 
     await retry(async () => {
       // Retry until the data has been revalidated
-      browser.refresh()
+      await browser.refresh()
 
       const newRandomNumber = await browser.elementById('random-number').text()
       expect(newRandomNumber).toMatch(/\d+/)

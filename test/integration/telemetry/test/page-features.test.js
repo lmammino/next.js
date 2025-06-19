@@ -1,12 +1,12 @@
 import path from 'path'
 import fs from 'fs-extra'
 import {
-  check,
   findPort,
   killApp,
   launchApp,
   nextBuild,
   renderViaHTTP,
+  retry,
 } from 'next-test-utils'
 
 const appDir = path.join(__dirname, '..')
@@ -27,7 +27,9 @@ describe('page features telemetry', () => {
         },
         turbo: true,
       })
-      await check(() => stderr, /NEXT_CLI_SESSION_STARTED/)
+      await retry(async () => {
+        expect(stderr).toMatch(/NEXT_CLI_SESSION_STARTED/)
+      })
       await renderViaHTTP(port, '/hello')
 
       if (app) {
@@ -63,13 +65,17 @@ describe('page features telemetry', () => {
         turbo: true,
       })
 
-      await check(() => stderr, /NEXT_CLI_SESSION_STARTED/)
+      await retry(async () => {
+        expect(stderr).toMatch(/NEXT_CLI_SESSION_STARTED/)
+      })
       await renderViaHTTP(port, '/hello')
 
       if (app) {
         await killApp(app, 'SIGTERM')
       }
-      await check(() => stderr, /NEXT_CLI_SESSION_STOPPED/)
+      await retry(async () => {
+        expect(stderr).toMatch(/NEXT_CLI_SESSION_STOPPED/)
+      })
 
       expect(stderr).toContain('NEXT_CLI_SESSION_STOPPED')
       const event1 = /NEXT_CLI_SESSION_STOPPED[\s\S]+?{([\s\S]+?)}/
@@ -98,14 +104,18 @@ describe('page features telemetry', () => {
         },
       })
 
-      await check(() => stderr, /NEXT_CLI_SESSION_STARTED/)
+      await retry(async () => {
+        expect(stderr).toMatch(/NEXT_CLI_SESSION_STARTED/)
+      })
       await renderViaHTTP(port, '/hello')
 
       if (app) {
         await killApp(app, 'SIGTERM')
       }
 
-      await check(() => stderr, /NEXT_CLI_SESSION_STOPPED/)
+      await retry(async () => {
+        expect(stderr).toMatch(/NEXT_CLI_SESSION_STOPPED/)
+      })
 
       expect(stderr).toContain('NEXT_CLI_SESSION_STOPPED')
       const event1 = /NEXT_CLI_SESSION_STOPPED[\s\S]+?{([\s\S]+?)}/

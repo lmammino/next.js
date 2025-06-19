@@ -3,7 +3,7 @@ import { retry } from 'next-test-utils'
 
 async function expectContainOnce(next: any, search: string) {
   // Ensure the search string is found once
-  await retry(() => {
+  await retry(async () => {
     const parts = next.cliOutput.split(search)
     expect(parts.length).toBe(2)
   })
