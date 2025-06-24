@@ -744,7 +744,6 @@ pub(crate) async fn analyse_ecmascript_module_internal(
                     .to_resolved()
                     .await?,
                 r.issue_source
-                    .clone()
                     .unwrap_or_else(|| IssueSource::from_source_only(source)),
                 r.annotations.clone(),
                 match options.tree_shaking_mode {
