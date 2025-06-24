@@ -3,7 +3,9 @@ use turbo_rcstr::rcstr;
 use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::FileSystemPath;
 use turbopack_core::{
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     reference_type::{CommonJsReferenceSubType, ReferenceType},
     resolve::parse::Request,
 };
@@ -113,5 +115,11 @@ impl Issue for ReactRefreshResolvingIssue {
             ])
             .resolved_cell(),
         ))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // There is no source for this issue since this is really about project configuration
+        // instead of any given source file.
+        None
     }
 }

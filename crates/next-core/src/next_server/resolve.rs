@@ -1,10 +1,12 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use turbo_rcstr::RcStr;
+use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{NonLocalValue, ResolvedVc, Vc, trace::TraceRawVcs};
 use turbo_tasks_fs::{self, FileJsonContent, FileSystemPath, glob::Glob};
 use turbopack_core::{
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     reference_type::{EcmaScriptModulesReferenceSubType, ReferenceType},
     resolve::{
         ExternalTraced, ExternalType, FindContextFileResult, ResolveResult, ResolveResultItem,
@@ -466,9 +468,9 @@ impl Issue for ExternalizeIssue {
     #[turbo_tasks::function]
     fn title(&self) -> Vc<StyledString> {
         StyledString::Line(vec![
-            StyledString::Text("Package ".into()),
+            StyledString::Text(rcstr!("Package ")),
             StyledString::Code(self.package.clone()),
-            StyledString::Text(" can't be external".into()),
+            StyledString::Text(rcstr!(" can't be external")),
         ])
         .cell()
     }
@@ -488,15 +490,21 @@ impl Issue for ExternalizeIssue {
         Ok(Vc::cell(Some(
             StyledString::Stack(vec![
                 StyledString::Line(vec![
-                    StyledString::Text("The request ".into()),
+                    StyledString::Text(rcstr!("The request ")),
                     StyledString::Code(self.request_str.clone()),
-                    StyledString::Text(" matches ".into()),
-                    StyledString::Code("serverExternalPackages".into()),
-                    StyledString::Text(" (or the default list).".into()),
+                    StyledString::Text(rcstr!(" matches ")),
+                    StyledString::Code(rcstr!("serverExternalPackages")),
+                    StyledString::Text(rcstr!(" (or the default list).")),
                 ]),
                 StyledString::Line(self.reason.clone()),
             ])
             .resolved_cell(),
         )))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // TODO(PACK-4879): The filepath is incorrect and there should be a fine grained source
+        // location pointing at the import/require
+        None
     }
 }

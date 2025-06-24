@@ -2,6 +2,7 @@ use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::FileSystemPath;
 
 use super::{Issue, IssueSeverity, IssueStage, OptionStyledString, StyledString};
+use crate::issue::IssueSource;
 
 #[turbo_tasks::value(shared)]
 pub struct CodeGenerationIssue {
@@ -35,5 +36,11 @@ impl Issue for CodeGenerationIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.message))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // TODO(PACK-4879): Either find a way to propogate source information or replace the
+        // usecases for this issue with normal rust errors.
+        None
     }
 }

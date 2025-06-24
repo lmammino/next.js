@@ -8,7 +8,9 @@ use turbo_tasks_fs::{FileSystemPath, glob::Glob};
 use turbopack_core::{
     diagnostics::DiagnosticExt,
     file_source::FileSource,
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     reference_type::ReferenceType,
     resolve::{
         ExternalTraced, ExternalType, ResolveResult, ResolveResultItem, ResolveResultOption,
@@ -92,6 +94,11 @@ impl Issue for InvalidImportModuleIssue {
             )
             .resolved_cell(),
         )))
+    }
+    fn source(&self) -> Option<&IssueSource> {
+        // TODO(PACK-4879): The filepath is incorrect and there should be a fine grained source
+        // location pointing at the import/require
+        None
     }
 }
 

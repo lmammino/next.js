@@ -14,8 +14,8 @@ use turbo_tasks_fs::{FileSystem, FileSystemPath};
 use turbopack_core::{
     error::PrettyPrintError,
     issue::{
-        Issue, IssueDescriptionExt, IssueSeverity, IssueStage, OptionIssueProcessingPathItems,
-        OptionStyledString, PlainIssue, StyledString,
+        Issue, IssueDescriptionExt, IssueSeverity, IssueSource, IssueStage,
+        OptionIssueProcessingPathItems, OptionStyledString, PlainIssue, StyledString,
     },
     server_fs::ServerFileSystem,
     version::{
@@ -401,6 +401,11 @@ impl Issue for FatalStreamIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.description))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // This error isn't associated with a source file at all.
+        None
     }
 }
 

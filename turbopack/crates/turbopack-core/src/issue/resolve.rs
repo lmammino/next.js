@@ -1,11 +1,11 @@
 use std::fmt::Write;
 
 use anyhow::Result;
-use turbo_rcstr::RcStr;
+use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{ReadRef, ResolvedVc, ValueToString, Vc};
 use turbo_tasks_fs::FileSystemPath;
 
-use super::{Issue, IssueSource, IssueStage, OptionIssueSource, OptionStyledString, StyledString};
+use super::{Issue, IssueSource, IssueStage, OptionStyledString, StyledString};
 use crate::{
     error::PrettyPrintError,
     issue::IssueSeverity,
@@ -36,8 +36,8 @@ impl Issue for ResolvingIssue {
     async fn title(&self) -> Result<Vc<StyledString>> {
         let request = self.request.request_pattern().to_string().owned().await?;
         Ok(StyledString::Line(vec![
-            StyledString::Strong("Module not found".into()),
-            StyledString::Text(": Can't resolve ".into()),
+            StyledString::Strong(rcstr!("Module not found")),
+            StyledString::Text(rcstr!(": Can't resolve ")),
             StyledString::Code(request),
         ])
         .cell())
@@ -114,12 +114,8 @@ impl Issue for ResolvingIssue {
         )))
     }
 
-    #[turbo_tasks::function]
-    async fn source(&self) -> Result<Vc<OptionIssueSource>> {
-        Ok(Vc::cell(match &self.source {
-            Some(source) => Some(source.resolve_source_map().await?.into_owned()),
-            None => None,
-        }))
+    fn source(&self) -> Option<&IssueSource> {
+        self.source.as_ref()
     }
 
     // TODO add sub_issue for a description of resolve_options

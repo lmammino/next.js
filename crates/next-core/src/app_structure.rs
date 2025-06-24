@@ -12,7 +12,7 @@ use turbo_tasks::{
 };
 use turbo_tasks_fs::{DirectoryContent, DirectoryEntry, FileSystemEntryType, FileSystemPath};
 use turbopack_core::issue::{
-    Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString,
+    Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
 };
 
 use crate::{
@@ -802,6 +802,9 @@ impl Issue for DuplicateParallelRouteIssue {
         )
         .cell())
     }
+    fn source(&self) -> Option<&IssueSource> {
+        None
+    }
 }
 
 fn page_path_except_parallel(loader_tree: &AppPageLoaderTree) -> Option<AppPage> {
@@ -1558,5 +1561,9 @@ impl Issue for DirectoryTreeIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.message))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        None
     }
 }

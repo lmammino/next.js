@@ -9,7 +9,7 @@ use turbo_tasks_fs::{
 };
 use turbopack_core::{
     asset::AssetContent,
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, StyledString},
+    issue::{Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, StyledString},
     reference_type::ReferenceType,
     resolve::{
         ResolveResult, ResolveResultItem, ResolveResultOption,
@@ -351,5 +351,11 @@ impl Issue for FontResolvingIssue {
             StyledString::Text(rcstr!("'")),
         ])
         .cell())
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // TODO(PACK-4879): The filepath is incorrect and there should be a fine grained source
+        // location pointing at the import/require
+        None
     }
 }

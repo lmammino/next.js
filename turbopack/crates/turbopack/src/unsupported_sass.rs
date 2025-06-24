@@ -5,7 +5,9 @@ use turbo_rcstr::rcstr;
 use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::{FileSystemPath, glob::Glob};
 use turbopack_core::{
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     reference_type::ReferenceType,
     resolve::{
         ResolveResultOption,
@@ -99,5 +101,11 @@ impl Issue for UnsupportedSassModuleIssue {
     #[turbo_tasks::function]
     fn stage(&self) -> Vc<IssueStage> {
         IssueStage::Unsupported.cell()
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // TODO(PACK-4879): The `file_path` is incorrect for this issue and we should supply
+        // detailed source information.
+        None
     }
 }

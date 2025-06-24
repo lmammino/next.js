@@ -1,7 +1,7 @@
 use turbo_rcstr::rcstr;
 use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::FileSystemPath;
-use turbopack_core::issue::{Issue, IssueStage, OptionStyledString, StyledString};
+use turbopack_core::issue::{Issue, IssueSource, IssueStage, OptionStyledString, StyledString};
 #[turbo_tasks::value(shared)]
 #[derive(Copy, Clone)]
 pub struct RenderingIssue {
@@ -45,6 +45,11 @@ impl Issue for RenderingIssue {
         }
 
         Vc::cell(Some(StyledString::Stack(details).resolved_cell()))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // This issue isn't directly tied to a source file since it is a dynamic condition
+        None
     }
 
     // TODO parse stack trace into source location

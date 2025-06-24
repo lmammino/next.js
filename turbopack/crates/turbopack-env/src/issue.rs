@@ -1,7 +1,7 @@
 use turbo_rcstr::rcstr;
 use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::FileSystemPath;
-use turbopack_core::issue::{Issue, IssueStage, OptionStyledString, StyledString};
+use turbopack_core::issue::{Issue, IssueSource, IssueStage, OptionStyledString, StyledString};
 
 /// An issue that occurred while resolving the parsing or evaluating the .env.
 #[turbo_tasks::value(shared)]
@@ -30,5 +30,10 @@ impl Issue for ProcessEnvIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.description))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // The dotenv library doesn't provide structured parsing errors.
+        None
     }
 }

@@ -4,7 +4,9 @@ use swc_core::ecma::ast::Program;
 use turbo_rcstr::rcstr;
 use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::FileSystemPath;
-use turbopack_core::issue::{Issue, IssueSeverity, IssueStage, OptionStyledString, StyledString};
+use turbopack_core::issue::{
+    Issue, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+};
 use turbopack_ecmascript::{CustomTransformer, TransformContext};
 
 /// A wrapper around an SWC's ecma transform wasm plugin module bytes, allowing
@@ -86,6 +88,10 @@ impl Issue for UnsupportedSwcEcmaTransformPluginsIssue {
             ))
             .resolved_cell(),
         ))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        None
     }
 }
 

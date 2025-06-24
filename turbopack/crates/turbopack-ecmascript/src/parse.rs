@@ -24,7 +24,7 @@ use swc_core::{
     },
 };
 use tracing::{Instrument, Level, instrument};
-use turbo_rcstr::RcStr;
+use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{ResolvedVc, ValueToString, Vc, util::WrapFuture};
 use turbo_tasks_fs::{FileContent, FileSystemPath, rope::Rope};
 use turbo_tasks_hash::hash_xxh3_hash64;
@@ -32,7 +32,9 @@ use turbopack_core::{
     SOURCE_URL_PROTOCOL,
     asset::{Asset, AssetContent},
     error::PrettyPrintError,
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     source::Source,
     source_map::utils::add_default_ignore_list,
 };
@@ -224,7 +226,7 @@ async fn parse_internal(
         Err(error) => {
             let error: RcStr = PrettyPrintError(&error).to_string().into();
             ReadSourceIssue {
-                source,
+                source: IssueSource::from_source_only(source),
                 error: error.clone(),
             }
             .resolved_cell()
@@ -272,7 +274,10 @@ async fn parse_internal(
                         .to_string()
                         .into();
                         ReadSourceIssue {
-                            source,
+                            // Technically we could supply byte offsets to the issue source, but
+                            // that would cause another utf8 error to be produced when we attempt to
+                            // infer line/column offsets
+                            source: IssueSource::from_source_only(source),
                             error: error.clone(),
                         }
                         .resolved_cell()
@@ -453,6 +458,7 @@ async fn parse_file_content(
                 file_name_hash: file_path_hash,
                 query_str: query,
                 file_path: fs_path_vc.to_resolved().await?,
+                source
             };
             let span = tracing::trace_span!("transforms");
             async {
@@ -529,7 +535,7 @@ async fn parse_file_content(
 
 #[turbo_tasks::value]
 struct ReadSourceIssue {
-    source: ResolvedVc<Box<dyn Source>>,
+    source: IssueSource,
     error: RcStr,
 }
 
@@ -537,12 +543,12 @@ struct ReadSourceIssue {
 impl Issue for ReadSourceIssue {
     #[turbo_tasks::function]
     fn file_path(&self) -> Vc<FileSystemPath> {
-        self.source.ident().path()
+        self.source.file_path()
     }
 
     #[turbo_tasks::function]
     fn title(&self) -> Vc<StyledString> {
-        StyledString::Text("Reading source code for parsing failed".into()).cell()
+        StyledString::Text(rcstr!("Reading source code for parsing failed")).cell()
     }
 
     #[turbo_tasks::function]
@@ -567,6 +573,10 @@ impl Issue for ReadSourceIssue {
     #[turbo_tasks::function]
     fn stage(&self) -> Vc<IssueStage> {
         IssueStage::Load.cell()
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        Some(&self.source)
     }
 }
 

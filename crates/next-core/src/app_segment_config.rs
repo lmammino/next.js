@@ -17,8 +17,7 @@ use turbopack_core::{
     file_source::FileSource,
     ident::AssetIdent,
     issue::{
-        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionIssueSource,
-        OptionStyledString, StyledString,
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
     },
     source::Source,
 };
@@ -244,11 +243,8 @@ impl Issue for NextSegmentConfigParsingIssue {
         ))
     }
 
-    #[turbo_tasks::function]
-    async fn source(&self) -> Result<Vc<OptionIssueSource>> {
-        Ok(Vc::cell(Some(
-            self.source.resolve_source_map().await?.into_owned(),
-        )))
+    fn source(&self) -> Option<&IssueSource> {
+        Some(&self.source)
     }
 }
 

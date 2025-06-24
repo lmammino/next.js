@@ -4,7 +4,9 @@ use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::{self, FileSystemEntryType, FileSystemPath};
 use turbopack::module_options::{LoaderRuleItem, OptionWebpackRules, WebpackRules};
 use turbopack_core::{
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     reference_type::{CommonJsReferenceSubType, ReferenceType},
     resolve::{node::node_cjs_resolve_options, parse::Request, pattern::Pattern, resolve},
 };
@@ -155,5 +157,11 @@ impl Issue for BabelIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.description))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // This issue is about a high level project misconfiguration, not a particular source
+        // location.
+        None
     }
 }

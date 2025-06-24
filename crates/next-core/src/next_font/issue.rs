@@ -1,6 +1,8 @@
 use turbo_tasks::{ResolvedVc, Vc};
 use turbo_tasks_fs::FileSystemPath;
-use turbopack_core::issue::{Issue, IssueSeverity, IssueStage, OptionStyledString, StyledString};
+use turbopack_core::issue::{
+    Issue, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+};
 
 #[turbo_tasks::value(shared)]
 pub(crate) struct NextFontIssue {
@@ -34,5 +36,9 @@ impl Issue for NextFontIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.description))
+    }
+    fn source(&self) -> Option<&IssueSource> {
+        // There is
+        None
     }
 }

@@ -53,8 +53,8 @@ use turbopack_core::{
     diagnostics::DiagnosticExt,
     file_source::FileSource,
     issue::{
-        Issue, IssueDescriptionExt, IssueExt, IssueSeverity, IssueStage, OptionStyledString,
-        StyledString,
+        Issue, IssueDescriptionExt, IssueExt, IssueSeverity, IssueSource, IssueStage,
+        OptionStyledString, StyledString,
     },
     module::Module,
     module_graph::{
@@ -628,6 +628,11 @@ impl Issue for ConflictIssue {
     #[turbo_tasks::function]
     fn description(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.description))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // this should point at one of the conflicing routes
+        None
     }
 }
 
@@ -1401,7 +1406,7 @@ impl Project {
             )
             .module();
 
-        let config = parse_config_from_source(module, NextRuntime::Edge).await?;
+        let config = parse_config_from_source(source, module, NextRuntime::Edge).await?;
 
         if matches!(config.runtime, NextRuntime::NodeJs) {
             Ok(self.node_middleware_context())

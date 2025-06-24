@@ -12,7 +12,9 @@ use turbopack_core::{
     chunk::{ChunkItem, ChunkType, ChunkableModule, ChunkingContext, ModuleChunkItemIdExt},
     context::{AssetContext, ProcessResult},
     ident::AssetIdent,
-    issue::{Issue, IssueExt, IssueSeverity, IssueStage, OptionStyledString, StyledString},
+    issue::{
+        Issue, IssueExt, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+    },
     module::Module,
     module_graph::ModuleGraph,
     reference::{ModuleReference, ModuleReferences},
@@ -329,7 +331,8 @@ impl EcmascriptChunkItem for ModuleChunkItem {
                         let Some(resolved_module) = &*resolved_module else {
                             CssModuleComposesIssue {
                                 severity: IssueSeverity::Error,
-                                source: self.module.ident().to_resolved().await?,
+                                // TODO(PACK-4879): this should include detailed location information
+                                source: IssueSource::from_source_only(self.module.await?.source),
                                 message: formatdoc! {
                                     r#"
                                         Module {from} referenced in `composes: ... from {from};` can't be resolved.
@@ -345,7 +348,8 @@ impl EcmascriptChunkItem for ModuleChunkItem {
                         else {
                             CssModuleComposesIssue {
                                 severity: IssueSeverity::Error,
-                                    source: self.module.ident().to_resolved().await?,
+                                // TODO(PACK-4879): this should include detailed location information
+                                source: IssueSource::from_source_only(self.module.await?.source),
                                 message: formatdoc! {
                                     r#"
                                         Module {from} referenced in `composes: ... from {from};` is not a CSS module.
@@ -430,7 +434,7 @@ fn generate_minimal_source_map(filename: String, source: String) -> Result<Rope>
 #[turbo_tasks::value(shared)]
 struct CssModuleComposesIssue {
     severity: IssueSeverity,
-    source: ResolvedVc<AssetIdent>,
+    source: IssueSource,
     message: RcStr,
 }
 
@@ -442,8 +446,10 @@ impl Issue for CssModuleComposesIssue {
 
     #[turbo_tasks::function]
     fn title(&self) -> Vc<StyledString> {
-        StyledString::Text("An issue occurred while resolving a CSS module `composes:` rule".into())
-            .cell()
+        StyledString::Text(rcstr!(
+            "An issue occurred while resolving a CSS module `composes:` rule"
+        ))
+        .cell()
     }
 
     #[turbo_tasks::function]
@@ -453,7 +459,7 @@ impl Issue for CssModuleComposesIssue {
 
     #[turbo_tasks::function]
     fn file_path(&self) -> Vc<FileSystemPath> {
-        self.source.path()
+        self.source.file_path()
     }
 
     #[turbo_tasks::function]
@@ -461,5 +467,9 @@ impl Issue for CssModuleComposesIssue {
         Vc::cell(Some(
             StyledString::Text(self.message.clone()).resolved_cell(),
         ))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        Some(&self.source)
     }
 }

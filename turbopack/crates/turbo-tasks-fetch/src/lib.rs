@@ -6,7 +6,9 @@ use anyhow::Result;
 use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{ResolvedVc, Vc, duration_span, mark_session_dependent};
 use turbo_tasks_fs::FileSystemPath;
-use turbopack_core::issue::{Issue, IssueSeverity, IssueStage, OptionStyledString, StyledString};
+use turbopack_core::issue::{
+    Issue, IssueSeverity, IssueSource, IssueStage, OptionStyledString, StyledString,
+};
 
 pub fn register() {
     turbo_tasks::register();
@@ -139,20 +141,19 @@ impl FetchError {
 #[turbo_tasks::value_impl]
 impl FetchError {
     #[turbo_tasks::function]
-    pub async fn to_issue(
-        self: Vc<Self>,
+    pub fn to_issue(
+        &self,
         severity: IssueSeverity,
         issue_context: ResolvedVc<FileSystemPath>,
-    ) -> Result<Vc<FetchIssue>> {
-        let this = &*self.await?;
-        Ok(FetchIssue {
+    ) -> Vc<FetchIssue> {
+        FetchIssue {
             issue_context,
             severity,
-            url: this.url,
-            kind: this.kind,
-            detail: this.detail,
+            url: self.url,
+            kind: self.kind,
+            detail: self.detail,
         }
-        .cell())
+        .cell()
     }
 }
 
@@ -212,5 +213,10 @@ impl Issue for FetchIssue {
     #[turbo_tasks::function]
     fn detail(&self) -> Vc<OptionStyledString> {
         Vc::cell(Some(self.detail))
+    }
+
+    fn source(&self) -> Option<&IssueSource> {
+        // There is no source to point at for these issues.
+        None
     }
 }

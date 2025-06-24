@@ -842,7 +842,8 @@ pub(crate) async fn analyse_ecmascript_module_internal(
         let exports = if !esm_exports.is_empty() || !esm_star_exports.is_empty() {
             if specified_type == SpecifiedModuleType::CommonJs {
                 SpecifiedModuleTypeIssue {
-                    path: source.ident().path().to_resolved().await?,
+                    // TODO(PACK-4879): this should point at one of the exports
+                    source: IssueSource::from_source_only(source),
                     specified_type,
                 }
                 .resolved_cell()
@@ -860,7 +861,9 @@ pub(crate) async fn analyse_ecmascript_module_internal(
             match detect_dynamic_export(program) {
                 DetectedDynamicExportType::CommonJs => {
                     SpecifiedModuleTypeIssue {
-                        path: source.ident().path().to_resolved().await?,
+                        // TODO(PACK-4879): this should point at the source location of the commonjs
+                        // export
+                        source: IssueSource::from_source_only(source),
                         specified_type,
                     }
                     .resolved_cell()
