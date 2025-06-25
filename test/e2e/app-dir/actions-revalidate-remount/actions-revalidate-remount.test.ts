@@ -21,7 +21,7 @@ describe('actions-revalidate-remount', () => {
       // The time should be updated
       expect(initialTime).not.toBe(time)
 
-      const logs = (await browser.log()).filter(
+      const logs = (await browser.logs()).filter(
         (log) => log.message === 'Loading Mounted'
       )
 

@@ -134,7 +134,7 @@ function runTests(mode) {
       await assertNoRedbox(browser)
 
       await check(async () => {
-        return (await browser.log()).map((log) => log.message).join('\n')
+        return (await browser.logs()).map((log) => log.message).join('\n')
       }, /Image is missing required "src" property/gm)
     })
 

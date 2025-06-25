@@ -61,7 +61,7 @@ const runTests = (isDev) => {
       await browser.waitForElementByCss('#onload-div')
       await waitFor(1000)
 
-      const logs = await browser.log()
+      const logs = await browser.logs()
       const filteredLogs = logs.filter(
         (log) =>
           !log.message.includes('Failed to load resource') &&
@@ -246,7 +246,7 @@ const runTests = (isDev) => {
       browser = await webdriver(appPort, '/page7')
       await waitFor(1000)
 
-      const logs = await browser.log()
+      const logs = await browser.logs()
       // not only should inline script run, but also should only run once
       expect(
         logs.filter((log) =>

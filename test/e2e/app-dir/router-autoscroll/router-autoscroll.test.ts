@@ -201,7 +201,7 @@ describe('router autoscrolling on navigation', () => {
       if (isNextDev) {
         // Check that we've logged a warning
         await check(async () => {
-          const logs = await browser.log()
+          const logs = await browser.logs()
           return logs.some((log) =>
             log.message.includes(
               'Skipping auto-scroll behavior due to `position: sticky` or `position: fixed` on element:'
@@ -225,7 +225,7 @@ describe('router autoscrolling on navigation', () => {
       if (isNextDev) {
         // Check that we've logged a warning
         await check(async () => {
-          const logs = await browser.log()
+          const logs = await browser.logs()
           return logs.some((log) =>
             log.message.includes(
               'Skipping auto-scroll behavior due to `position: sticky` or `position: fixed` on element:'

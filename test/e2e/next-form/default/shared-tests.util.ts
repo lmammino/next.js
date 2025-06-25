@@ -154,7 +154,7 @@ export function runSharedTests(type: 'app' | 'pages') {
             expect(await navigationTracker.didMpaNavigate()).toBe(false)
 
             if (isNextDev) {
-              const logs = (await session.log()).map((item) => item.message)
+              const logs = (await session.logs()).map((item) => item.message)
 
               expect(logs).not.toContainEqual(
                 expect.stringMatching(
@@ -183,7 +183,7 @@ export function runSharedTests(type: 'app' | 'pages') {
           const submitButton = await session.elementByCss('[type="submit"]')
           await submitButton.click()
 
-          const logs = await session.log()
+          const logs = await session.logs()
 
           if (isNextDev) {
             expect(logs).toContainEqual(
@@ -268,7 +268,7 @@ export function runSharedTests(type: 'app' | 'pages') {
       await submitButton.click()
 
       if (isNextDev) {
-        const logs = await session.log()
+        const logs = await session.logs()
         expect(logs).toContainEqual(
           expect.objectContaining({
             source: 'warning',

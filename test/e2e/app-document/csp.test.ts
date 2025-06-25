@@ -8,7 +8,7 @@ describe('Document and App - With CSP enabled', () => {
   it('should load inline script by hash', async () => {
     const browser = await next.browser('/?withCSP=hash')
     if (global.browserName === 'chrome') {
-      const errLog = await browser.log()
+      const errLog = await browser.logs()
       expect(errLog.filter((e) => e.source === 'security')).toEqual([])
     }
   })
@@ -16,7 +16,7 @@ describe('Document and App - With CSP enabled', () => {
   it('should load inline script by nonce', async () => {
     const browser = await next.browser('/?withCSP=nonce')
     if (global.browserName === 'chrome') {
-      const errLog = await browser.log()
+      const errLog = await browser.logs()
       expect(errLog.filter((e) => e.source === 'security')).toEqual([])
     }
   })

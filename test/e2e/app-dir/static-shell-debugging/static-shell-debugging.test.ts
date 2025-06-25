@@ -44,7 +44,7 @@ describe('static-shell-debugging', () => {
         expect(await browser.elementByCss('div').text()).toBe('Fallback')
 
         // Must not log the page error "Error: Connection closed."
-        expect(await browser.log()).toEqual([])
+        expect(await browser.logs()).toEqual([])
       })
     }
   } else {

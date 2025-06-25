@@ -29,7 +29,7 @@ describe('allow-development-build', () => {
         })
 
         await retry(async () => {
-          const logs = await browser.log()
+          const logs = await browser.logs()
 
           const errorLogs = logs.filter((log) => log.source === 'error')
 

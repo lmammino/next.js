@@ -16,7 +16,7 @@ describe('graceful-degrade', () => {
       userAgent: 'Googlebot',
     })
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
     const errors = logs
       .filter((x) => x.source === 'error')
       .map((x) => x.message)
@@ -41,7 +41,7 @@ describe('graceful-degrade', () => {
       userAgent: 'Googlebot',
     })
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
     const errors = logs
       .filter((x) => x.source === 'error')
       .map((x) => x.message)

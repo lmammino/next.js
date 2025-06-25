@@ -20,7 +20,7 @@ describe(`app-dir hmr-env`, () => {
         let logs
 
         await retry(async () => {
-          logs = await browser.log()
+          logs = await browser.logs()
           expect(logs).toEqual(
             expect.arrayContaining([
               expect.objectContaining({

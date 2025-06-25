@@ -41,7 +41,7 @@ describe('app-dir - owner-stack', () => {
       // This is flaky. Sometimes we miss that the reload happened.
       await retry(
         async () => {
-          const logs = await browser.log()
+          const logs = await browser.logs()
           expect(logs).toEqual(
             expect.arrayContaining([
               expect.objectContaining({
@@ -86,7 +86,7 @@ describe('app-dir - owner-stack', () => {
 
     await assertNoRedbox(browser)
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
     const errorLog = logs.find((log) => {
       return log.message.includes('Error: browser error')
     }).message

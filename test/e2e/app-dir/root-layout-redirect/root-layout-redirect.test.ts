@@ -16,7 +16,7 @@ describe('root-layout-redirect', () => {
         .text()
     ).toBe('Result Page')
 
-    const browserLogs = await browser.log()
+    const browserLogs = await browser.logs()
 
     let foundErrors = false
 

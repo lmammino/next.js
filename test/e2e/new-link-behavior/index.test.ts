@@ -8,7 +8,7 @@ import path from 'path'
 async function matchLogs(browser, includes: string) {
   let found = false
 
-  const browserLogs = await browser.log()
+  const browserLogs = await browser.logs()
 
   browserLogs.forEach((log) => {
     if (log.message.includes(includes)) {

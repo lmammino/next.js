@@ -3,7 +3,7 @@ import { nextTestSetup } from 'e2e-utils'
 import { Playwright } from 'next-webdriver'
 
 async function assertNoConsoleErrors(browser: Playwright) {
-  const logs = await browser.log()
+  const logs = await browser.logs()
   const warningsAndErrors = logs.filter((log) => {
     return log.source === 'warning' || log.source === 'error'
   })

@@ -184,7 +184,7 @@ describe.each([
         try {
           browser = await webdriver(nextUrl, '/test-index-hmr')
           const text = await browser.elementByCss('#go-asset').text()
-          const logs = await browser.log()
+          const logs = await browser.logs()
           expect(text).toBe('Asset')
 
           // Hydrates with react 18 is correct as expected

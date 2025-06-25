@@ -36,7 +36,7 @@ import { retry } from 'next-test-utils'
         await browser.loadPage(new URL('/', next.url).toString())
 
         await retry(async () => {
-          const logs = await browser.log()
+          const logs = await browser.logs()
           expect(logs).toEqual(
             expect.arrayContaining([
               {

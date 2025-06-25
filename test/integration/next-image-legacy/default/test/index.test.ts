@@ -181,7 +181,7 @@ function runTests(mode) {
         await browser.elementById('belowthefold').getAttribute('loading')
       ).toBe(null)
 
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       expect(warnings).not.toMatch(
@@ -790,7 +790,7 @@ function runTests(mode) {
 
       if (mode === 'dev') {
         await waitFor(1000)
-        const warnings = (await browser.log())
+        const warnings = (await browser.logs())
           .map((log) => log.message)
           .join('\n')
         expect(warnings).toMatch(
@@ -817,7 +817,7 @@ function runTests(mode) {
       await assertNoRedbox(browser)
 
       await check(async () => {
-        return (await browser.log()).map((log) => log.message).join('\n')
+        return (await browser.logs()).map((log) => log.message).join('\n')
       }, /Image is missing required "src" property/gm)
     })
 
@@ -873,7 +873,7 @@ function runTests(mode) {
       const browser = await webdriver(appPort, '/layout-responsive-inside-flex')
       await browser.eval(`document.getElementById("img").scrollIntoView()`)
       await check(async () => {
-        return (await browser.log()).map((log) => log.message).join('\n')
+        return (await browser.logs()).map((log) => log.message).join('\n')
       }, /Image with src (.*)jpg(.*) may not render properly as a child of a flex container. Consider wrapping the image with a div to configure the width/gm)
       await assertNoRedbox(browser)
     })
@@ -885,7 +885,7 @@ function runTests(mode) {
       )
       await browser.eval(`document.querySelector("footer").scrollIntoView()`)
       await waitFor(1000)
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       expect(warnings).toMatch(
@@ -906,7 +906,7 @@ function runTests(mode) {
     it('should warn when using a very small image with placeholder=blur', async () => {
       const browser = await webdriver(appPort, '/small-img-import')
 
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -918,7 +918,7 @@ function runTests(mode) {
     it('should not warn when Image is child of p', async () => {
       const browser = await webdriver(appPort, '/inside-paragraph')
 
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -942,7 +942,7 @@ function runTests(mode) {
           return 'done'
         }, 'done')
         await waitFor(1000)
-        const warnings = (await browser.log())
+        const warnings = (await browser.logs())
           .map((log) => log.message)
           .join('\n')
         await assertNoRedbox(browser)
@@ -957,7 +957,7 @@ function runTests(mode) {
     it('should warn when loader is missing width', async () => {
       const browser = await webdriver(appPort, '/invalid-loader')
       await browser.eval(`document.querySelector("footer").scrollIntoView()`)
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -981,7 +981,7 @@ function runTests(mode) {
     it('should warn when using sizes with incorrect layout', async () => {
       const browser = await webdriver(appPort, '/invalid-sizes')
       await browser.eval(`document.querySelector("footer").scrollIntoView()`)
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1002,7 +1002,7 @@ function runTests(mode) {
     it('should not warn when svg, even if with loader prop or without', async () => {
       const browser = await webdriver(appPort, '/loader-svg')
       await browser.eval(`document.querySelector("footer").scrollIntoView()`)
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1042,7 +1042,7 @@ function runTests(mode) {
         return 'done'
       }, 'done')
       await waitFor(1000)
-      const warnings = (await browser.log())
+      const warnings = (await browser.logs())
         .map((log) => log.message)
         .filter((log) => log.startsWith('Image with src'))
       expect(warnings[0]).toMatch(

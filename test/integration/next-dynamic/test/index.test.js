@@ -35,7 +35,7 @@ function runTests() {
     expect(await browser.eval('window.caughtErrors')).toBe('')
 
     // should not print "invalid-dynamic-suspense" warning in browser's console
-    const logs = (await browser.log()).map((log) => log.message).join('\n')
+    const logs = (await browser.logs()).map((log) => log.message).join('\n')
     expect(logs).not.toContain(
       'https://nextjs.org/docs/messages/invalid-dynamic-suspense'
     )

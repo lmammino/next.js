@@ -104,7 +104,7 @@ describe('app dir - navigation', () => {
 
           // Expect to see the params changed message at least twice.
           let lastLogIndex = await retry(async () => {
-            const logs: Array<{ message: string }> = await browser.log()
+            const logs: Array<{ message: string }> = await browser.logs()
 
             expect(
               logs.filter(({ message }) => message === 'params changed')
@@ -123,7 +123,7 @@ describe('app dir - navigation', () => {
             expect(rerender).toBe('Re-Render 3')
           })
 
-          let logs: Array<{ message: string }> = await browser.log()
+          let logs: Array<{ message: string }> = await browser.logs()
           expect(logs.slice(lastLogIndex)).not.toContainEqual(
             expect.objectContaining({
               message: 'params changed',
@@ -135,7 +135,7 @@ describe('app dir - navigation', () => {
           await browser.elementById('change-params-button').click()
 
           await retry(async () => {
-            logs = await browser.log()
+            logs = await browser.logs()
 
             expect(logs.slice(lastLogIndex)).toContainEqual(
               expect.objectContaining({
@@ -994,7 +994,7 @@ describe('app dir - navigation', () => {
     describe('locale warnings', () => {
       it('should warn about using the `locale` prop with `next/link` in app router', async () => {
         const browser = await next.browser('/locale-app')
-        const logs = await browser.log()
+        const logs = await browser.logs()
         expect(logs).toContainEqual(
           expect.objectContaining({
             message: expect.stringContaining(
@@ -1007,7 +1007,7 @@ describe('app dir - navigation', () => {
 
       it('should have no warnings in pages router', async () => {
         const browser = await next.browser('/locale-pages')
-        const logs = await browser.log()
+        const logs = await browser.logs()
         expect(logs.filter((log) => log.source === 'warning')).toHaveLength(0)
       })
     })

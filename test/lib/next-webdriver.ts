@@ -29,20 +29,26 @@ if (isBrowserStack) {
   }
 }
 
-let browserTeardown: (() => Promise<void>)[] = []
-let browserQuit: (() => Promise<void>) | undefined
+/**
+ * Register a callback to be called after each test.
+ * This is used to teardown the browser instance.
+ */
+let teardown: (() => Promise<void>)[] = []
+if (typeof afterEach === 'function') {
+  afterEach(async () => {
+    const callbacks = teardown
+    teardown = []
 
-if (typeof afterAll === 'function') {
-  afterAll(async () => {
-    await Promise.all(browserTeardown.map((f) => f())).catch((e) =>
-      console.error('browser teardown', e)
-    )
+    const result = await Promise.allSettled(callbacks.map((f) => f()))
 
-    if (browserQuit) {
-      await browserQuit()
+    const rejected = result.filter((r) => r.status === 'rejected')
+    if (rejected.length > 0) {
+      console.error('browser teardown', rejected)
     }
   })
 }
+
+let playwright: Playwright | undefined
 
 export interface WebdriverOptions {
   /**
@@ -116,12 +122,10 @@ export default async function webdriver(
     userAgent,
   } = options
 
-  const { Playwright, quit } = await import('./browsers/playwright')
-  browserQuit = quit
+  const { Playwright } = await import('./browsers/playwright')
 
-  const browser = new Playwright()
   const browserName = process.env.BROWSER_NAME || 'chrome'
-  await browser.setup(
+  playwright ??= await Playwright.setup(
     browserName,
     locale!,
     !disableJavaScript,
@@ -130,6 +134,10 @@ export default async function webdriver(
     typeof headless !== 'undefined' ? headless : !!process.env.HEADLESS,
     userAgent
   )
+  teardown.push(async () => {
+    await playwright?.close()
+    playwright = undefined
+  })
   ;(global as any).browserName = browserName
 
   const fullUrl = getFullUrl(
@@ -140,7 +148,7 @@ export default async function webdriver(
 
   console.log(`\n> Loading browser with ${fullUrl}\n`)
 
-  await browser.loadPage(fullUrl, {
+  await playwright.loadPage(fullUrl, {
     disableCache,
     cpuThrottleRate,
     beforePageLoad,
@@ -148,14 +156,12 @@ export default async function webdriver(
   })
   console.log(`\n> Loaded browser with ${fullUrl}\n`)
 
-  browserTeardown.push(browser.close.bind(browser))
-
   // Wait for application to hydrate
   if (waitHydration) {
     console.log(`\n> Waiting hydration for ${fullUrl}\n`)
 
     const checkHydrated = async () => {
-      await browser.eval(() => {
+      await playwright?.eval(() => {
         return new Promise<void>((callback) => {
           // if it's not a Next.js app return
           if (
@@ -165,14 +171,14 @@ export default async function webdriver(
               'undefined'
           ) {
             console.log('Not a next.js page, resolving hydrate check')
-            callback()
+            return callback()
           }
 
           // TODO: should we also ensure router.isReady is true
           // by default before resolving?
           if ((window as any).__NEXT_HYDRATED) {
             console.log('Next.js page already hydrated')
-            callback()
+            return callback()
           } else {
             let timeout = setTimeout(callback, 10 * 1000)
             ;(window as any).__NEXT_HYDRATED_CB = function () {
@@ -207,5 +213,6 @@ export default async function webdriver(
   if (process.env.IS_TURBOPACK_TEST) {
     await waitFor(1000)
   }
-  return browser
+
+  return playwright
 }

@@ -82,7 +82,7 @@ describe('app dir - prefetching', () => {
     const browser = await next.browser('/')
     await browser.eval('window.next.router.prefetch("/dashboard/123")')
     await browser.refresh()
-    const logs = await browser.log()
+    const logs = await browser.logs()
 
     expect(logs).not.toMatchObject(
       expect.arrayContaining([

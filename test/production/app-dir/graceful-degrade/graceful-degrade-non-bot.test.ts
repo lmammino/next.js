@@ -18,7 +18,7 @@ describe('graceful-degrade - non bot', () => {
   it('should not degrade to graceful error when chunk loading fails in ssr for non-bot user agents', async () => {
     const browser = await next.browser('/chunk-loading-failed')
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
     const errors = logs
       .filter((x) => x.source === 'error')
       .map((x) => x.message)
@@ -40,7 +40,7 @@ describe('graceful-degrade - non bot', () => {
   it('should show error boundary when browser errors when error boundary is defined', async () => {
     const browser = await next.browser('/browser-crash-error-boundary')
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
     const errors = logs
       .filter((x) => x.source === 'error')
       .map((x) => x.message)

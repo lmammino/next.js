@@ -1128,7 +1128,7 @@ describe('Production Usage', () => {
     let browser
     try {
       browser = await webdriver(next.appPort, '/development-logs')
-      const browserLogs = await browser.log()
+      const browserLogs = await browser.logs()
       let found = false
       browserLogs.forEach((log) => {
         if (log.message.includes('Next.js auto-prefetches automatically')) {

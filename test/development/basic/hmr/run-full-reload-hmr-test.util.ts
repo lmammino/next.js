@@ -43,7 +43,7 @@ export function runFullReloadHmrTest(nextConfig: {
     expect(next.cliOutput.slice(start)).toContain(cliWarning)
 
     // Browser warning
-    const browserLogs = await browser.log()
+    const browserLogs = await browser.logs()
     expect(
       browserLogs.some(({ message }) =>
         message.includes(
@@ -79,7 +79,7 @@ export function runFullReloadHmrTest(nextConfig: {
     expect(next.cliOutput.slice(start)).toContain(cliWarning)
 
     // Browser warning
-    const browserLogs = await browser.log()
+    const browserLogs = await browser.logs()
     expect(
       browserLogs.some(({ message }) =>
         message.includes(

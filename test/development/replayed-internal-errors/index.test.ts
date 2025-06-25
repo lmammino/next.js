@@ -23,7 +23,7 @@ describe('Replaying internal errors', () => {
     // but it seems to disappear the first time we navigate to /target.
     // But checking console errors should be enough because they're closely tied
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
 
     expect(logs).toContainEqual(
       expect.objectContaining({
@@ -58,7 +58,7 @@ describe('Replaying internal errors', () => {
     // but it seems to disappear the first time we navigate to /target.
     // But checking console errors should be enough because they're closely tied
 
-    const logs = await browser.log()
+    const logs = await browser.logs()
 
     expect(logs).toContainEqual(
       expect.objectContaining({

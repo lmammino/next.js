@@ -7,7 +7,7 @@ describe('Link component deprecations', () => {
 
   it('logs deprecation warning for legacyBehavior prop', async () => {
     const browser = await next.browser('/')
-    const logs = await browser.log()
+    const logs = await browser.logs()
 
     const errors = logs.filter(
       (log) =>

@@ -21,7 +21,7 @@ describe('dynamic-io-dev-warmup', () => {
 
   it('logs with Prerender or Server environment depending based on whether the timing of when the log runs relative to this environment boundary', async () => {
     let browser = await next.browser('/')
-    let logs = await browser.log()
+    let logs = await browser.logs()
 
     assertLog(logs, 'after layout cache read', 'Prerender')
     assertLog(logs, 'after page cache read', 'Prerender')
@@ -35,7 +35,7 @@ describe('dynamic-io-dev-warmup', () => {
     await next.fetch('/revalidate')
 
     browser = await next.browser('/')
-    logs = await browser.log()
+    logs = await browser.logs()
 
     assertLog(logs, 'after layout cache read', 'Prerender')
     assertLog(logs, 'after page cache read', 'Prerender')
