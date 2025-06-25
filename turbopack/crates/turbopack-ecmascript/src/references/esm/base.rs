@@ -856,4 +856,8 @@ impl Issue for CircularReExport {
             .resolved_cell(),
         )))
     }
+    fn source(&self) -> Option<&IssueSource> {
+        // TODO(PACK-4879): This should really point at an import
+        None
+    }
 }

@@ -22,10 +22,7 @@ use turbopack_core::{
     asset::{Asset, AssetContent},
     chunk::{ChunkingContext, MinifyType},
     environment::Environment,
-    issue::{
-        Issue, IssueExt, IssueSource, IssueStage, OptionIssueSource, OptionStyledString,
-        StyledString,
-    },
+    issue::{Issue, IssueExt, IssueSource, IssueStage, OptionStyledString, StyledString},
     reference::ModuleReferences,
     reference_type::ImportContext,
     resolve::origin::ResolveOrigin,
