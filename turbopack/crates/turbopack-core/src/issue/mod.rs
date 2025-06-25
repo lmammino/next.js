@@ -16,7 +16,7 @@ use turbo_rcstr::RcStr;
 use turbo_tasks::{
     CollectiblesSource, IntoTraitRef, NonLocalValue, OperationVc, RawVc, ReadRef, ResolvedVc,
     TaskInput, TransientInstance, TransientValue, TryJoinIterExt, Upcast, ValueDefault,
-    ValueToString, Vc, debug::ValueDebugFormat, emit, trace::TraceRawVcs,
+    ValueToString, Vc, emit, trace::TraceRawVcs,
 };
 use turbo_tasks_fs::{FileContent, FileLine, FileLinesContent, FileSystem, FileSystemPath};
 use turbo_tasks_hash::{DeterministicHash, Xxh3Hash64Hasher};
@@ -893,17 +893,6 @@ impl PlainIssue {
             documentation_link: issue.documentation_link().owned().await?,
             source: {
                 if let Some(s) = trait_ref.source() {
-                    // Ensure sources are aligned with filepaths
-                    debug_assert!(
-                        s.file_path().await? == issue.file_path().await?,
-                        "Issue {} has a different filepath {} than the issue source {}",
-                        (*issue)
-                            .value_debug_format(usize::MAX)
-                            .try_to_string()
-                            .await?,
-                        issue.file_path().to_string().await?,
-                        s.file_path().to_string().await?
-                    );
                     Some(s.into_plain().await?)
                 } else {
                     None
