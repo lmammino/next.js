@@ -204,6 +204,7 @@ impl HmrBenchmark {
                     preview_mode_signing_key: RcStr::from("test-key"),
                 },
                 browserslist_query: RcStr::from("last 2 versions"),
+                has_rewrites: false,
                 no_mangling: false,
             };
 
