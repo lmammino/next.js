@@ -6,19 +6,20 @@ import {
   writeFileSync,
   createReadStream,
 } from 'fs'
-import { promisify } from 'util'
-import http from 'http'
-import path from 'path'
+import { promisify } from 'node:util'
+import http from 'node:http'
+import path from 'node:path'
+import { setTimeout } from 'node:timers/promises'
 
 import type cheerio from 'cheerio'
 import spawn from 'cross-spawn'
-import { writeFile } from 'fs-extra'
+import { writeFile } from 'node:fs/promises'
 import getPort from 'get-port'
 import { getRandomPort } from 'get-port-please'
 import fetch from 'node-fetch'
-import qs from 'querystring'
+import qs from 'node:querystring'
 import treeKill from 'tree-kill'
-import { once } from 'events'
+import { once } from 'node:events'
 
 import server from 'next/dist/server/next'
 import _pkg from 'next/package.json'
@@ -26,13 +27,13 @@ import _pkg from 'next/package.json'
 import type { SpawnOptions, ChildProcess } from 'child_process'
 import type { RequestInit, Response } from 'node-fetch'
 import type { NextServer } from 'next/dist/server/next'
-import { Playwright } from 'next-webdriver'
 
 import { getTurbopackFlag, shouldRunTurboDevTest } from './turbo'
 import stripAnsi from 'strip-ansi'
 // TODO: Create dedicated Jest environment that sets up these matchers
 // Edge Runtime unit tests fail with "EvalError: Code generation from strings disallowed for this context" if these matchers are imported in those tests.
 import './add-redbox-matchers'
+import { Playwright } from './browsers/playwright'
 
 export { shouldRunTurboDevTest }
 
@@ -652,11 +653,33 @@ export async function stopApp(server: http.Server | undefined) {
   await promisify(server.close).apply(server)
 }
 
+export class TestingLogger {
+  private prefix: string
+
+  constructor(prefix: string) {
+    this.prefix = prefix
+  }
+
+  debug(message: string, ...args: any[]): void {
+    if (process.env.DEBUG || process.env.VERBOSE) {
+      console.log(`[${this.prefix}] ${message}`, ...args)
+    }
+  }
+
+  error(message: string, ...args: any[]): void {
+    console.error(`[${this.prefix}] ${message}`, ...args)
+  }
+
+  warn(message: string, ...args: any[]): void {
+    console.warn(`[${this.prefix}] ${message}`, ...args)
+  }
+}
+
 export async function waitFor(
   millisOrCondition: number | (() => boolean)
 ): Promise<void> {
   if (typeof millisOrCondition === 'number') {
-    return new Promise((resolve) => setTimeout(resolve, millisOrCondition))
+    return setTimeout(millisOrCondition)
   }
 
   return new Promise((resolve) => {
