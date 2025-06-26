@@ -801,8 +801,6 @@ pub fn is_in_try(ast_path: &AstNodePath<AstParentNodeRef<'_>>) -> bool {
             AstParentKind::Function(FunctionField::Body) => Some(false),
             AstParentKind::Constructor(ConstructorField::Body) => Some(false),
             AstParentKind::ClassMethod(ClassMethodField::Function) => Some(false),
-            AstParentKind::ClassDecl(ClassDeclField::Class) => Some(false),
-            AstParentKind::ClassExpr(ClassExprField::Class) => Some(false),
             AstParentKind::MethodProp(MethodPropField::Function) => Some(false),
             AstParentKind::TryStmt(TryStmtField::Block) => Some(true),
             _ => None,
