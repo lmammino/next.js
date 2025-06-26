@@ -120,13 +120,11 @@ describe('pnpm support', () => {
         waitHydration: false,
       })
       expect(await browser.waitForElementByCss('#world').text()).toBe('World')
-      await browser.close()
 
       browser = await webdriver(appPort, '/about', {
         waitHydration: false,
       })
       expect(await browser.waitForElementByCss('#world').text()).toBe('World')
-      await browser.close()
     } finally {
       if (server) {
         await killApp(server)

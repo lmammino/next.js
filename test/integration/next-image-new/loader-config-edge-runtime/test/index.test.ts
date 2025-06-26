@@ -53,9 +53,6 @@ describe('Image Loader Config with Edge Runtime', () => {
       })
       afterAll(async () => {
         await killApp(app)
-        if (browser) {
-          browser.close()
-        }
       })
       runTests()
     }
@@ -71,9 +68,6 @@ describe('Image Loader Config with Edge Runtime', () => {
       })
       afterAll(async () => {
         await killApp(app)
-        if (browser) {
-          browser.close()
-        }
       })
       runTests()
     }

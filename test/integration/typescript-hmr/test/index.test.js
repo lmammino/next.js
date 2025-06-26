@@ -34,31 +34,19 @@ describe('TypeScript HMR', () => {
   describe('delete a page and add it back', () => {
     it('should detect the changes to typescript pages and display it', async () => {
       let browser
-      try {
-        browser = await webdriver(appPort, '/hello')
-        await check(() => getBrowserBodyText(browser), /Hello World/)
-
-        const pagePath = join(appDir, 'pages/hello.tsx')
-        const originalContent = await fs.readFile(pagePath, 'utf8')
-        const editedContent = originalContent.replace('Hello', 'COOL page')
-
-        if (process.env.IS_TURBOPACK_TEST) {
-          // TODO Turbopack needs a bit to start watching
-          await new Promise((resolve) => setTimeout(resolve, 500))
-        }
-
-        // change the content
-        await fs.writeFile(pagePath, editedContent, 'utf8')
-        await check(() => getBrowserBodyText(browser), /COOL page/)
-
-        // add the original content
-        await fs.writeFile(pagePath, originalContent, 'utf8')
-        await check(() => getBrowserBodyText(browser), /Hello World/)
-      } finally {
-        if (browser) {
-          await browser.close()
-        }
+      browser = await webdriver(appPort, '/hello')
+      await check(() => getBrowserBodyText(browser), /Hello World/)
+      const pagePath = join(appDir, 'pages/hello.tsx')
+      const originalContent = await fs.readFile(pagePath, 'utf8')
+      const editedContent = originalContent.replace('Hello', 'COOL page')
+      if (process.env.IS_TURBOPACK_TEST) {
+        // TODO Turbopack needs a bit to start watching
+        await new Promise((resolve) => setTimeout(resolve, 500))
       }
+      await fs.writeFile(pagePath, editedContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /COOL page/)
+      await fs.writeFile(pagePath, originalContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /Hello World/)
     })
   })
 
@@ -83,7 +71,6 @@ describe('TypeScript HMR', () => {
         return html.match(/iframe/) ? 'fail' : 'success'
       }, /success/)
     } finally {
-      if (browser) browser.close()
       await fs.writeFile(pagePath, origContent)
     }
   })
@@ -116,7 +103,6 @@ describe('TypeScript HMR', () => {
 
       expect(res).toBe(true)
     } finally {
-      if (browser) browser.close()
       await fs.writeFile(pagePath, origContent)
     }
   })

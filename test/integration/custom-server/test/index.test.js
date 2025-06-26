@@ -181,29 +181,19 @@ describe.each([
 
       it('Should support HMR when rendering with /index pathname', async () => {
         let browser
-        try {
-          browser = await webdriver(nextUrl, '/test-index-hmr')
-          const text = await browser.elementByCss('#go-asset').text()
-          const logs = await browser.logs()
-          expect(text).toBe('Asset')
-
-          // Hydrates with react 18 is correct as expected
-          expect(
-            logs.some((log) =>
-              log.message.includes(
-                'ReactDOM.hydrate is no longer supported in React 18'
-              )
+        browser = await webdriver(nextUrl, '/test-index-hmr')
+        const text = await browser.elementByCss('#go-asset').text()
+        const logs = await browser.logs()
+        expect(text).toBe('Asset')
+        expect(
+          logs.some((log) =>
+            log.message.includes(
+              'ReactDOM.hydrate is no longer supported in React 18'
             )
-          ).toBe(false)
-
-          indexPg.replace('Asset', 'Asset!!')
-
-          await check(() => browser.elementByCss('#go-asset').text(), /Asset!!/)
-        } finally {
-          if (browser) {
-            await browser.close()
-          }
-        }
+          )
+        ).toBe(false)
+        indexPg.replace('Asset', 'Asset!!')
+        await check(() => browser.elementByCss('#go-asset').text(), /Asset!!/)
       })
     })
   }

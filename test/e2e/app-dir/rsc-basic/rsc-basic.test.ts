@@ -366,16 +366,13 @@ describe('app dir - rsc basics', () => {
   })
 
   it('should stick to the url without trailing /page suffix', async () => {
-    const browser = await next.browser('/edge/dynamic')
-    const indexUrl = await browser.url()
+    let browser = await next.browser('/edge/dynamic')
+    expect(await browser.url()).toBe(`${next.url}/edge/dynamic`)
 
-    await browser.loadPage(`${next.url}/edge/dynamic/123`, {
+    browser = await next.browser(`${next.url}/edge/dynamic/123`, {
       disableCache: false,
     })
-
-    const dynamicRouteUrl = await browser.url()
-    expect(indexUrl).toBe(`${next.url}/edge/dynamic`)
-    expect(dynamicRouteUrl).toBe(`${next.url}/edge/dynamic/123`)
+    expect(await browser.url()).toBe(`${next.url}/edge/dynamic/123`)
   })
 
   it('should support streaming for flight response', async () => {
@@ -466,7 +463,7 @@ describe('app dir - rsc basics', () => {
       ]
     `)
 
-    await browser.loadPage(next.url + '/edge-pages-react')
+    await browser.goto(next.url + '/edge-pages-react')
     const browserEdgePagesReactVersions = await browser.eval(`
       [
         document.querySelector('#react').innerText,

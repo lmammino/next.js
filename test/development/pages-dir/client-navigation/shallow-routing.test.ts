@@ -27,8 +27,6 @@ describe('Client navigation with shallow routing', () => {
       .elementByCss('#get-initial-props-run-count')
       .text()
     expect(getInitialPropsRunCount).toBe('getInitialProps run count: 1')
-
-    await browser.close()
   })
 
   it('should handle the back button and should not run getInitialProps', async () => {
@@ -49,8 +47,6 @@ describe('Client navigation with shallow routing', () => {
       .elementByCss('#get-initial-props-run-count')
       .text()
     expect(getInitialPropsRunCount).toBe('getInitialProps run count: 1')
-
-    await browser.close()
   })
 
   it('should run getInitialProps always when rending the page to the screen', async () => {
@@ -74,8 +70,6 @@ describe('Client navigation with shallow routing', () => {
       .elementByCss('#get-initial-props-run-count')
       .text()
     expect(getInitialPropsRunCount).toBe('getInitialProps run count: 2')
-
-    await browser.close()
   })
 
   it('should keep the scroll position on shallow routing', async () => {

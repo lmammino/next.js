@@ -465,225 +465,166 @@ function runTests({ dev }) {
 
     it('should not have any console warnings when navigating to dynamic route', async () => {
       let browser
-      try {
-        browser = await webdriver(appPort, '/')
-        await browser.eval('window.beforeNav = 1')
-        await browser.elementByCss('#dynamic-route-no-as').click()
-        await browser.waitForElementByCss('#asdf')
+      browser = await webdriver(appPort, '/')
+      await browser.eval('window.beforeNav = 1')
+      await browser.elementByCss('#dynamic-route-no-as').click()
+      await browser.waitForElementByCss('#asdf')
 
-        expect(await browser.eval('window.beforeNav')).toBe(1)
+      expect(await browser.eval('window.beforeNav')).toBe(1)
 
-        const text = await browser.elementByCss('#asdf').text()
-        expect(text).toMatch(/this is.*?dynamic-1/i)
-        expect(await browser.eval('window.caughtWarns')).toEqual([])
-      } finally {
-        if (browser) await browser.close()
-      }
+      const text = await browser.elementByCss('#asdf').text()
+      expect(text).toMatch(/this is.*?dynamic-1/i)
+      expect(await browser.eval('window.caughtWarns')).toEqual([])
     })
   }
 
   it('should navigate to a dynamic page successfully', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#view-post-1').click()
-      await browser.waitForElementByCss('#asdf')
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#view-post-1').click()
+    await browser.waitForElementByCss('#asdf')
 
-      expect(await browser.eval('window.beforeNav')).toBe(1)
+    expect(await browser.eval('window.beforeNav')).toBe(1)
 
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/this is.*?post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/this is.*?post-1/i)
   })
 
   it('should navigate to a dynamic page with href with differing query and as correctly', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#view-post-1-hidden-query').click()
-      await browser.waitForElementByCss('#asdf')
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#view-post-1-hidden-query').click()
+    await browser.waitForElementByCss('#asdf')
 
-      expect(await browser.eval('window.beforeNav')).toBe(1)
+    expect(await browser.eval('window.beforeNav')).toBe(1)
 
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/this is.*?post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/this is.*?post-1/i)
   })
 
   it('should navigate to a dynamic page successfully no as', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#view-post-1-no-as').click()
-      await browser.waitForElementByCss('#asdf')
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#view-post-1-no-as').click()
+    await browser.waitForElementByCss('#asdf')
 
-      expect(await browser.eval('window.beforeNav')).toBe(1)
+    expect(await browser.eval('window.beforeNav')).toBe(1)
 
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/this is.*?post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/this is.*?post-1/i)
   })
 
   it('should navigate to a dynamic page successfully interpolated', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
 
-      const href = await browser
-        .elementByCss('#view-post-1-interpolated')
-        .getAttribute('href')
+    const href = await browser
+      .elementByCss('#view-post-1-interpolated')
+      .getAttribute('href')
 
-      const parsedHref = url.parse(href, true)
-      expect(parsedHref.pathname).toBe('/post-1')
-      expect(parsedHref.query).toEqual({})
+    const parsedHref = url.parse(href, true)
+    expect(parsedHref.pathname).toBe('/post-1')
+    expect(parsedHref.query).toEqual({})
 
-      await browser.elementByCss('#view-post-1-interpolated').click()
-      await browser.waitForElementByCss('#asdf')
+    await browser.elementByCss('#view-post-1-interpolated').click()
+    await browser.waitForElementByCss('#asdf')
 
-      expect(await browser.eval('window.beforeNav')).toBe(1)
+    expect(await browser.eval('window.beforeNav')).toBe(1)
 
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/this is.*?post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/this is.*?post-1/i)
   })
 
   it('should navigate to a dynamic page successfully interpolated with additional query values', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
 
-      const href = await browser
-        .elementByCss('#view-post-1-interpolated-more-query')
-        .getAttribute('href')
+    const href = await browser
+      .elementByCss('#view-post-1-interpolated-more-query')
+      .getAttribute('href')
 
-      const parsedHref = url.parse(href, true)
-      expect(parsedHref.pathname).toBe('/post-1')
-      expect(parsedHref.query).toEqual({ another: 'value' })
+    const parsedHref = url.parse(href, true)
+    expect(parsedHref.pathname).toBe('/post-1')
+    expect(parsedHref.query).toEqual({ another: 'value' })
 
-      await browser.elementByCss('#view-post-1-interpolated-more-query').click()
-      await browser.waitForElementByCss('#asdf')
+    await browser.elementByCss('#view-post-1-interpolated-more-query').click()
+    await browser.waitForElementByCss('#asdf')
 
-      expect(await browser.eval('window.beforeNav')).toBe(1)
+    expect(await browser.eval('window.beforeNav')).toBe(1)
 
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/this is.*?post-1/i)
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/this is.*?post-1/i)
 
-      const query = JSON.parse(await browser.elementByCss('#query').text())
-      expect(query).toEqual({
-        name: 'post-1',
-        another: 'value',
-      })
-    } finally {
-      if (browser) await browser.close()
-    }
+    const query = JSON.parse(await browser.elementByCss('#query').text())
+    expect(query).toEqual({
+      name: 'post-1',
+      another: 'value',
+    })
   })
 
   it('should allow calling Router.push on mount successfully', async () => {
     const browser = await webdriver(appPort, '/post-1/on-mount-redir')
-    try {
-      expect(await browser.waitForElementByCss('h3').text()).toBe('My blog')
-    } finally {
-      browser.close()
-    }
+    expect(await browser.waitForElementByCss('h3').text()).toBe('My blog')
   })
 
   it('should navigate optional dynamic page', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#view-post-1-comments').click()
-      await browser.waitForElementByCss('#asdf')
-
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/comments for post-1 here/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#view-post-1-comments').click()
+    await browser.waitForElementByCss('#asdf')
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/comments for post-1 here/i)
   })
 
   it('should navigate optional dynamic page with value', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#view-nested-dynamic-cmnt').click()
-      await browser.waitForElementByCss('#asdf')
-
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/blog post.*321.*comment.*123/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#view-nested-dynamic-cmnt').click()
+    await browser.waitForElementByCss('#asdf')
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/blog post.*321.*comment.*123/i)
   })
 
   it('should navigate to a nested dynamic page successfully', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#view-post-1-comment-1').click()
-      await browser.waitForElementByCss('#asdf')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/i am.*comment-1.*on.*post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#view-post-1-comment-1').click()
+    await browser.waitForElementByCss('#asdf')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/i am.*comment-1.*on.*post-1/i)
   })
 
   it('should navigate to a nested dynamic page successfully no as', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#view-post-1-comment-1-no-as').click()
-      await browser.waitForElementByCss('#asdf')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/i am.*comment-1.*on.*post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#view-post-1-comment-1-no-as').click()
+    await browser.waitForElementByCss('#asdf')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/i am.*comment-1.*on.*post-1/i)
   })
 
   it('should navigate to a nested dynamic page successfully interpolated', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-
-      const href = await browser
-        .elementByCss('#view-post-1-comment-1-interpolated')
-        .getAttribute('href')
-
-      expect(url.parse(href).pathname).toBe('/post-1/comment-1')
-
-      await browser.elementByCss('#view-post-1-comment-1-interpolated').click()
-      await browser.waitForElementByCss('#asdf')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#asdf').text()
-      expect(text).toMatch(/i am.*comment-1.*on.*post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    const href = await browser
+      .elementByCss('#view-post-1-comment-1-interpolated')
+      .getAttribute('href')
+    expect(url.parse(href).pathname).toBe('/post-1/comment-1')
+    await browser.elementByCss('#view-post-1-comment-1-interpolated').click()
+    await browser.waitForElementByCss('#asdf')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#asdf').text()
+    expect(text).toMatch(/i am.*comment-1.*on.*post-1/i)
   })
 
   it('should pass params in getInitialProps during SSR', async () => {
@@ -693,16 +634,11 @@ function runTests({ dev }) {
 
   it('should pass params in getInitialProps during client navigation', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#view-post-1-comment-1').click()
-      await browser.waitForElementByCss('span')
-
-      const text = await browser.elementByCss('span').text()
-      expect(text).toMatch(/gip.*post-1/i)
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#view-post-1-comment-1').click()
+    await browser.waitForElementByCss('span')
+    const text = await browser.elementByCss('span').text()
+    expect(text).toMatch(/gip.*post-1/i)
   })
 
   it('[catch all] should not match root on SSR', async () => {
@@ -748,59 +684,39 @@ function runTests({ dev }) {
 
   it('[catch-all] should pass params in getInitialProps during client navigation (single)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#catch-all-single').click()
-      await browser.waitForElementByCss('#all-ssr-content')
-
-      const text = await browser.elementByCss('#all-ssr-content').text()
-      expect(text).toBe('{"rest":["hello"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#catch-all-single').click()
+    await browser.waitForElementByCss('#all-ssr-content')
+    const text = await browser.elementByCss('#all-ssr-content').text()
+    expect(text).toBe('{"rest":["hello"]}')
   })
 
   it('[catch-all] should pass params in getInitialProps during client navigation (multi)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#catch-all-multi').click()
-      await browser.waitForElementByCss('#all-ssr-content')
-
-      const text = await browser.elementByCss('#all-ssr-content').text()
-      expect(text).toBe('{"rest":["hello1","hello2"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#catch-all-multi').click()
+    await browser.waitForElementByCss('#all-ssr-content')
+    const text = await browser.elementByCss('#all-ssr-content').text()
+    expect(text).toBe('{"rest":["hello1","hello2"]}')
   })
 
   it('[catch-all] should pass params in getInitialProps during client navigation (encoded)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#catch-all-enc').click()
-      await browser.waitForElementByCss('#all-ssr-content')
-
-      const text = await browser.elementByCss('#all-ssr-content').text()
-      expect(text).toBe('{"rest":["hello1/","he/llo2"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#catch-all-enc').click()
+    await browser.waitForElementByCss('#all-ssr-content')
+    const text = await browser.elementByCss('#all-ssr-content').text()
+    expect(text).toBe('{"rest":["hello1/","he/llo2"]}')
   })
 
   it("[catch-all] shouldn't fail on colon followed by double digits in the path", async () => {
     // https://github.com/GoogleChromeLabs/native-url/issues/27
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#catch-all-colonnumber').click()
-      await browser.waitForElementByCss('#all-ssr-content')
-
-      const text = await browser.elementByCss('#all-ssr-content').text()
-      expect(text).toBe('{"rest":[":42"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#catch-all-colonnumber').click()
+    await browser.waitForElementByCss('#all-ssr-content')
+    const text = await browser.elementByCss('#all-ssr-content').text()
+    expect(text).toBe('{"rest":[":42"]}')
   })
 
   it('[ssg: catch all] should pass param in getStaticProps during SSR', async () => {
@@ -877,129 +793,83 @@ function runTests({ dev }) {
 
   it('[ssg: catch-all] should pass params in getStaticProps during client navigation (single)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#ssg-catch-all-single').click()
-      await browser.waitForElementByCss('#all-ssg-content')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#ssg-catch-all-single').click()
+    await browser.waitForElementByCss('#all-ssg-content')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello"]}')
   })
 
   it('[ssg: catch-all] should pass params in getStaticProps during client navigation (single interpolated)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-
-      const href = await browser
-        .elementByCss('#ssg-catch-all-single-interpolated')
-        .getAttribute('href')
-
-      expect(url.parse(href).pathname).toBe('/p1/p2/all-ssg/hello')
-
-      await browser.elementByCss('#ssg-catch-all-single-interpolated').click()
-      await browser.waitForElementByCss('#all-ssg-content')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    const href = await browser
+      .elementByCss('#ssg-catch-all-single-interpolated')
+      .getAttribute('href')
+    expect(url.parse(href).pathname).toBe('/p1/p2/all-ssg/hello')
+    await browser.elementByCss('#ssg-catch-all-single-interpolated').click()
+    await browser.waitForElementByCss('#all-ssg-content')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello"]}')
   })
 
   it('[ssg: catch-all] should pass params in getStaticProps during client navigation (multi)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#ssg-catch-all-multi').click()
-      await browser.waitForElementByCss('#all-ssg-content')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello1","hello2"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#ssg-catch-all-multi').click()
+    await browser.waitForElementByCss('#all-ssg-content')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello1","hello2"]}')
   })
 
   it('[ssg: catch-all] should pass params in getStaticProps during client navigation (multi) no as', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-      await browser.elementByCss('#ssg-catch-all-multi-no-as').click()
-      await browser.waitForElementByCss('#all-ssg-content')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello1","hello2"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    await browser.elementByCss('#ssg-catch-all-multi-no-as').click()
+    await browser.waitForElementByCss('#all-ssg-content')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello1","hello2"]}')
   })
 
   it('[ssg: catch-all] should pass params in getStaticProps during client navigation (multi interpolated)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.eval('window.beforeNav = 1')
-
-      const href = await browser
-        .elementByCss('#ssg-catch-all-multi-interpolated')
-        .getAttribute('href')
-
-      expect(url.parse(href).pathname).toBe('/p1/p2/all-ssg/hello1/hello2')
-
-      await browser.elementByCss('#ssg-catch-all-multi-interpolated').click()
-      await browser.waitForElementByCss('#all-ssg-content')
-
-      expect(await browser.eval('window.beforeNav')).toBe(1)
-
-      const text = await browser.elementByCss('#all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello1","hello2"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.eval('window.beforeNav = 1')
+    const href = await browser
+      .elementByCss('#ssg-catch-all-multi-interpolated')
+      .getAttribute('href')
+    expect(url.parse(href).pathname).toBe('/p1/p2/all-ssg/hello1/hello2')
+    await browser.elementByCss('#ssg-catch-all-multi-interpolated').click()
+    await browser.waitForElementByCss('#all-ssg-content')
+    expect(await browser.eval('window.beforeNav')).toBe(1)
+    const text = await browser.elementByCss('#all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello1","hello2"]}')
   })
 
   it('[nested ssg: catch-all] should pass params in getStaticProps during client navigation (single)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#nested-ssg-catch-all-single').click()
-      await browser.waitForElementByCss('#nested-all-ssg-content')
-
-      const text = await browser.elementByCss('#nested-all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#nested-ssg-catch-all-single').click()
+    await browser.waitForElementByCss('#nested-all-ssg-content')
+    const text = await browser.elementByCss('#nested-all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello"]}')
   })
 
   it('[nested ssg: catch-all] should pass params in getStaticProps during client navigation (multi)', async () => {
     let browser
-    try {
-      browser = await webdriver(appPort, '/')
-      await browser.elementByCss('#nested-ssg-catch-all-multi').click()
-      await browser.waitForElementByCss('#nested-all-ssg-content')
-
-      const text = await browser.elementByCss('#nested-all-ssg-content').text()
-      expect(text).toBe('{"rest":["hello1","hello2"]}')
-    } finally {
-      if (browser) await browser.close()
-    }
+    browser = await webdriver(appPort, '/')
+    await browser.elementByCss('#nested-ssg-catch-all-multi').click()
+    await browser.waitForElementByCss('#nested-all-ssg-content')
+    const text = await browser.elementByCss('#nested-all-ssg-content').text()
+    expect(text).toBe('{"rest":["hello1","hello2"]}')
   })
 
   it('should update dynamic values on mount', async () => {
@@ -1214,16 +1084,12 @@ function runTests({ dev }) {
       const origContent = await fs.readFile(page, 'utf8')
       const newContent = origContent.replace(/comments/, 'commentss')
 
-      try {
-        await fs.writeFile(page, newContent, 'utf8')
-        await waitFor(3 * 1000)
+      await fs.writeFile(page, newContent, 'utf8')
+      await waitFor(3 * 1000)
 
-        let text = await browser.eval(`document.documentElement.innerHTML`)
-        expect(text).toMatch(/commentss for.*post-1/)
-      } finally {
-        await fs.writeFile(page, origContent, 'utf8')
-        if (browser) await browser.close()
-      }
+      text = await browser.eval(`document.documentElement.innerHTML`)
+      expect(text).toMatch(/commentss for.*post-1/)
+      await fs.writeFile(page, origContent, 'utf8')
     })
   } else {
     it('should output a routes-manifest correctly', async () => {

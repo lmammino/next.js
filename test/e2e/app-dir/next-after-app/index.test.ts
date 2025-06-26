@@ -172,7 +172,7 @@ describe.each(runtimes)('after() in %s runtime', (runtimeValue) => {
       })
 
       // ...but navigate away before streaming is finished (it hangs forever, so it will never finish)
-      await browser.get(
+      await browser.goto(
         new URL(pathPrefix + '/interrupted/incomplete-stream/end', next.url)
           .href
       )

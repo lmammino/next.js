@@ -292,20 +292,12 @@ module.exports = {
 
             it('should have the correct color on mount after navigation', async () => {
               let browser
-              try {
-                browser = await webdriver(appPort, '/')
-
-                // Navigate to other:
-                await browser.waitForElementByCss('#link-other').click()
-                const text = await browser
-                  .waitForElementByCss('#red-title')
-                  .text()
-                expect(text).toMatchInlineSnapshot(`"rgb(255, 0, 0)"`)
-              } finally {
-                if (browser) {
-                  await browser.close()
-                }
-              }
+              browser = await webdriver(appPort, '/')
+              await browser.waitForElementByCss('#link-other').click()
+              const text = await browser
+                .waitForElementByCss('#red-title')
+                .text()
+              expect(text).toMatchInlineSnapshot(`"rgb(255, 0, 0)"`)
             })
           }
         )

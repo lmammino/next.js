@@ -324,72 +324,36 @@ const context = {}
 
     it.skip('should detect the changes and display it', async () => {
       let browser
-      try {
-        browser = await webdriver(dynamicAppPort, '/hmr/test')
-        const text = await browser.elementByCss('p').text()
-        expect(text).toBe('This is the hot AMP page.')
-
-        const hmrTestPagePath = join(
-          __dirname,
-          '../',
-          'pages',
-          'hmr',
-          'test.js'
-        )
-
-        const originalContent = readFileSync(hmrTestPagePath, 'utf8')
-        const editedContent = originalContent.replace(
-          'This is the hot AMP page',
-          'This is a cold AMP page'
-        )
-
-        // change the content
-        writeFileSync(hmrTestPagePath, editedContent, 'utf8')
-
-        await check(
-          () => getBrowserBodyText(browser),
-          /This is a cold AMP page/
-        )
-
-        // add the original content
-        writeFileSync(hmrTestPagePath, originalContent, 'utf8')
-
-        await check(
-          () => getBrowserBodyText(browser),
-          /This is the hot AMP page/
-        )
-      } finally {
-        await browser.close()
-      }
+      browser = await webdriver(dynamicAppPort, '/hmr/test')
+      const text = await browser.elementByCss('p').text()
+      expect(text).toBe('This is the hot AMP page.')
+      const hmrTestPagePath = join(__dirname, '../', 'pages', 'hmr', 'test.js')
+      const originalContent = readFileSync(hmrTestPagePath, 'utf8')
+      const editedContent = originalContent.replace(
+        'This is the hot AMP page',
+        'This is a cold AMP page'
+      )
+      writeFileSync(hmrTestPagePath, editedContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /This is a cold AMP page/)
+      writeFileSync(hmrTestPagePath, originalContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /This is the hot AMP page/)
     })
 
     it.skip('should detect changes and refresh an AMP page', async () => {
       let browser
-      try {
-        browser = await webdriver(dynamicAppPort, '/hmr/amp')
-        const text = await browser.elementByCss('p').text()
-        expect(text).toBe(`I'm an AMP page!`)
-
-        const hmrTestPagePath = join(__dirname, '../', 'pages', 'hmr', 'amp.js')
-
-        const originalContent = readFileSync(hmrTestPagePath, 'utf8')
-        const editedContent = originalContent.replace(
-          `I'm an AMP page!`,
-          'replaced it!'
-        )
-
-        // change the content
-        writeFileSync(hmrTestPagePath, editedContent, 'utf8')
-
-        await check(() => getBrowserBodyText(browser), /replaced it!/)
-
-        // add the original content
-        writeFileSync(hmrTestPagePath, originalContent, 'utf8')
-
-        await check(() => getBrowserBodyText(browser), /I'm an AMP page!/)
-      } finally {
-        await browser.close()
-      }
+      browser = await webdriver(dynamicAppPort, '/hmr/amp')
+      const text = await browser.elementByCss('p').text()
+      expect(text).toBe(`I'm an AMP page!`)
+      const hmrTestPagePath = join(__dirname, '../', 'pages', 'hmr', 'amp.js')
+      const originalContent = readFileSync(hmrTestPagePath, 'utf8')
+      const editedContent = originalContent.replace(
+        `I'm an AMP page!`,
+        'replaced it!'
+      )
+      writeFileSync(hmrTestPagePath, editedContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /replaced it!/)
+      writeFileSync(hmrTestPagePath, originalContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /I'm an AMP page!/)
     })
 
     it.skip('should detect changes to component and refresh an AMP page', async () => {
@@ -459,72 +423,47 @@ const context = {}
         await check(() => getBrowserBodyText(browser), /I'm an AMP page!/)
       } finally {
         writeFileSync(hmrTestPagePath, originalContent, 'utf8')
-        await browser.close()
       }
     })
 
     it.skip('should detect changes and refresh a hybrid AMP page', async () => {
       let browser
-      try {
-        browser = await webdriver(dynamicAppPort, '/hmr/hybrid?amp=1')
-        const text = await browser.elementByCss('p').text()
-        expect(text).toBe(`I'm a hybrid AMP page!`)
-
-        const hmrTestPagePath = join(
-          __dirname,
-          '../',
-          'pages',
-          'hmr',
-          'hybrid.js'
-        )
-
-        const originalContent = readFileSync(hmrTestPagePath, 'utf8')
-        const editedContent = originalContent.replace(
-          `I'm a hybrid AMP page!`,
-          'replaced it!'
-        )
-
-        // change the content
-        writeFileSync(hmrTestPagePath, editedContent, 'utf8')
-
-        await check(() => getBrowserBodyText(browser), /replaced it!/)
-
-        // add the original content
-        writeFileSync(hmrTestPagePath, originalContent, 'utf8')
-
-        await check(() => getBrowserBodyText(browser), /I'm a hybrid AMP page!/)
-      } finally {
-        await browser.close()
-      }
+      browser = await webdriver(dynamicAppPort, '/hmr/hybrid?amp=1')
+      const text = await browser.elementByCss('p').text()
+      expect(text).toBe(`I'm a hybrid AMP page!`)
+      const hmrTestPagePath = join(
+        __dirname,
+        '../',
+        'pages',
+        'hmr',
+        'hybrid.js'
+      )
+      const originalContent = readFileSync(hmrTestPagePath, 'utf8')
+      const editedContent = originalContent.replace(
+        `I'm a hybrid AMP page!`,
+        'replaced it!'
+      )
+      writeFileSync(hmrTestPagePath, editedContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /replaced it!/)
+      writeFileSync(hmrTestPagePath, originalContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /I'm a hybrid AMP page!/)
     })
 
     it.skip('should detect changes and refresh an AMP page at root pages/', async () => {
       let browser
-      try {
-        browser = await webdriver(dynamicAppPort, '/root-hmr')
-        const text = await browser.elementByCss('p').text()
-        expect(text).toBe(`I'm an AMP page!`)
-
-        const hmrTestPagePath = join(__dirname, '../', 'pages', 'root-hmr.js')
-
-        const originalContent = readFileSync(hmrTestPagePath, 'utf8')
-        const editedContent = originalContent.replace(
-          `I'm an AMP page!`,
-          'replaced it!'
-        )
-
-        // change the content
-        writeFileSync(hmrTestPagePath, editedContent, 'utf8')
-
-        await check(() => getBrowserBodyText(browser), /replaced it!/)
-
-        // add the original content
-        writeFileSync(hmrTestPagePath, originalContent, 'utf8')
-
-        await check(() => getBrowserBodyText(browser), /I'm an AMP page!/)
-      } finally {
-        await browser.close()
-      }
+      browser = await webdriver(dynamicAppPort, '/root-hmr')
+      const text = await browser.elementByCss('p').text()
+      expect(text).toBe(`I'm an AMP page!`)
+      const hmrTestPagePath = join(__dirname, '../', 'pages', 'root-hmr.js')
+      const originalContent = readFileSync(hmrTestPagePath, 'utf8')
+      const editedContent = originalContent.replace(
+        `I'm an AMP page!`,
+        'replaced it!'
+      )
+      writeFileSync(hmrTestPagePath, editedContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /replaced it!/)
+      writeFileSync(hmrTestPagePath, originalContent, 'utf8')
+      await check(() => getBrowserBodyText(browser), /I'm an AMP page!/)
     })
 
     it('should detect amp validator warning on invalid amp', async () => {

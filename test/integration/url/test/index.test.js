@@ -52,12 +52,8 @@ for (const dev of [false, true]) {
 
         it(`should client-render the ${page} page`, async () => {
           let browser
-          try {
-            browser = await webdriver(appPort, page)
-            await check(() => getBrowserBodyText(browser), expectedClient)
-          } finally {
-            await browser.close()
-          }
+          browser = await webdriver(appPort, page)
+          await check(() => getBrowserBodyText(browser), expectedClient)
         })
       }
 

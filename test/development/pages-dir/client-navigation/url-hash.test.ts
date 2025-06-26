@@ -38,8 +38,6 @@ describe('Client navigation with URL hash', () => {
           .text()
 
         expect(counter).toBe('COUNT: 0')
-
-        await browser.close()
       })
 
       it('should scroll to the specified position on the same page', async () => {
@@ -162,8 +160,6 @@ describe('Client navigation with URL hash', () => {
           .text()
 
         expect(counter).toBe('COUNT: 0')
-
-        await browser.close()
       })
     })
 
@@ -180,8 +176,6 @@ describe('Client navigation with URL hash', () => {
           .text()
 
         expect(counter).toBe('COUNT: 1')
-
-        await browser.close()
       })
 
       it('should not run getInitialProps when removing via back', async () => {
@@ -195,7 +189,6 @@ describe('Client navigation with URL hash', () => {
           .text()
 
         expect(counter).toBe('COUNT: 0')
-        await browser.close()
       })
     })
 
@@ -212,8 +205,6 @@ describe('Client navigation with URL hash', () => {
           .text()
 
         expect(counter).toBe('COUNT: 0')
-
-        await browser.close()
       })
     })
   })
@@ -237,8 +228,6 @@ describe('Client navigation with URL hash', () => {
 
         // getInitialProps should not be called with only hash changes
         expect(counter).toBe('COUNT: 0')
-
-        await browser.close()
       })
 
       it('should increment the shallow history state counter', async () => {
@@ -257,8 +246,6 @@ describe('Client navigation with URL hash', () => {
         const counter = await browser.elementByCss('p').text()
 
         expect(counter).toBe('COUNT: 0')
-
-        await browser.close()
       })
     })
   })

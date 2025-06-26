@@ -25,9 +25,9 @@ describe('getServerSideProps returns notFound: true', () => {
   afterAll(() => next.destroy())
 
   it('should not poll indefinitely', async () => {
-    const browser = await webdriver(next.url, '/')
+    await webdriver(next.url, '/')
     await waitFor(3000)
-    await browser.close()
+
     const logOccurrences = next.cliOutput.split('gssp called').length - 1
     expect(logOccurrences).toBe(1)
   })

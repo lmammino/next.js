@@ -27,23 +27,17 @@ describe('Image Component assetPrefix Tests', () => {
 
       it('should include assetPrefix when placeholder=blur during next dev', async () => {
         let browser
-        try {
-          browser = await webdriver(appPort, '/')
-          const id = 'test1'
-          const bgImage = await browser.eval(
-            `document.getElementById('${id}').style['background-image']`
+        browser = await webdriver(appPort, '/')
+        const id = 'test1'
+        const bgImage = await browser.eval(
+          `document.getElementById('${id}').style['background-image']`
+        )
+        if (process.env.IS_TURBOPACK_TEST) {
+          expect(bgImage).toContain('data:image/jpeg;')
+        } else {
+          expect(bgImage).toMatch(
+            /\/_next\/image\?url=https%3A%2F%2Fexample.com%2Fpre%2F_next%2Fstatic%2Fmedia%2Ftest(.+).jpg&w=8&q=70/
           )
-          if (process.env.IS_TURBOPACK_TEST) {
-            expect(bgImage).toContain('data:image/jpeg;')
-          } else {
-            expect(bgImage).toMatch(
-              /\/_next\/image\?url=https%3A%2F%2Fexample.com%2Fpre%2F_next%2Fstatic%2Fmedia%2Ftest(.+).jpg&w=8&q=70/
-            )
-          }
-        } finally {
-          if (browser) {
-            await browser.close()
-          }
         }
       })
     }
@@ -60,18 +54,12 @@ describe('Image Component assetPrefix Tests', () => {
 
       it('should use base64 data url with placeholder=blur during next start', async () => {
         let browser
-        try {
-          browser = await webdriver(appPort, '/')
-          const id = 'test1'
-          const bgImage = await browser.eval(
-            `document.getElementById('${id}').style['background-image']`
-          )
-          expect(bgImage).toMatch('data:image/jpeg;base64')
-        } finally {
-          if (browser) {
-            await browser.close()
-          }
-        }
+        browser = await webdriver(appPort, '/')
+        const id = 'test1'
+        const bgImage = await browser.eval(
+          `document.getElementById('${id}').style['background-image']`
+        )
+        expect(bgImage).toMatch('data:image/jpeg;base64')
       })
     }
   )

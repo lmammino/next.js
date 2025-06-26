@@ -246,7 +246,7 @@ describe('ServerSide Props Preview Mode', () => {
       })
 
       it('should fetch preview data on SSR', async () => {
-        await browser.get(`http://localhost:${appPort}/`)
+        await browser.goto(`http://localhost:${appPort}/`)
         await browser.waitForElementByCss('#props-pre')
         // expect(await browser.elementById('props-pre').text()).toBe('Has No Props')
         // await new Promise(resolve => setTimeout(resolve, 2000))
@@ -256,7 +256,7 @@ describe('ServerSide Props Preview Mode', () => {
       })
 
       it('should fetch preview data on CST', async () => {
-        await browser.get(`http://localhost:${appPort}/to-index`)
+        await browser.goto(`http://localhost:${appPort}/to-index`)
         await browser.waitForElementByCss('#to-index')
         await browser.eval('window.itdidnotrefresh = "hello"')
         await browser.elementById('to-index').click()
@@ -268,9 +268,9 @@ describe('ServerSide Props Preview Mode', () => {
       })
 
       it('should fetch prerendered data', async () => {
-        await browser.get(`http://localhost:${appPort}/api/reset`)
+        await browser.goto(`http://localhost:${appPort}/api/reset`)
 
-        await browser.get(`http://localhost:${appPort}/`)
+        await browser.goto(`http://localhost:${appPort}/`)
         await browser.waitForElementByCss('#props-pre')
         expect(await browser.elementById('props-pre').text()).toBe(
           'false and null'
@@ -278,7 +278,6 @@ describe('ServerSide Props Preview Mode', () => {
       })
 
       afterAll(async () => {
-        await browser.close()
         await killApp(app)
       })
     }

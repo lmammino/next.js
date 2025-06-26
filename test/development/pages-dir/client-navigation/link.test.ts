@@ -22,13 +22,11 @@ describe('Client Navigation with <Link/>', () => {
       .text()
 
     expect(text).toBe('This is the about page.')
-    await browser.close()
   })
 
   it('should not throw error when one number type child is provided', async () => {
     const browser = await next.browser('/link-number-child')
     await assertNoRedbox(browser)
-    if (browser) await browser.close()
   })
 
   it('should navigate back after reload', async () => {
@@ -40,7 +38,6 @@ describe('Client Navigation with <Link/>', () => {
     await browser.back()
     await waitFor(3000)
     const text = await browser.elementByCss('#about-link').text()
-    if (browser) await browser.close()
     expect(text).toMatch(/About/)
   })
 
@@ -54,7 +51,6 @@ describe('Client Navigation with <Link/>', () => {
     await browser.forward()
     await waitFor(3000)
     const text = await browser.elementByCss('p').text()
-    if (browser) await browser.close()
     expect(text).toMatch(/this is the about page/i)
   })
 
@@ -81,7 +77,6 @@ describe('Client Navigation with <Link/>', () => {
       .text()
 
     expect(counterText).toBe('Counter: 1')
-    await browser.close()
   })
 
   it('should navigate an absolute url', async () => {

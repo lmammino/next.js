@@ -175,8 +175,7 @@ describe('dynamic-data with dynamic = "error"', () => {
 
     it('displays redbox when `dynamic = "error"` and dynamic data is read in dev', async () => {
       let browser = await next.browser('/cookies?foo=foosearch')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /cookies with \`dynamic = "error"\` couldn't be rendered statically because it used \`cookies\`. See more info here: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic#dynamic-rendering",
            "environmentLabel": "Server",
@@ -189,13 +188,9 @@ describe('dynamic-data with dynamic = "error"', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
 
       browser = await next.browser('/connection')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /connection with \`dynamic = "error"\` couldn't be rendered statically because it used \`connection\`. See more info here: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic#dynamic-rendering",
            "environmentLabel": "Server",
@@ -208,13 +203,9 @@ describe('dynamic-data with dynamic = "error"', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
 
       browser = await next.browser('/headers?foo=foosearch')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /headers with \`dynamic = "error"\` couldn't be rendered statically because it used \`headers\`. See more info here: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic#dynamic-rendering",
            "environmentLabel": "Server",
@@ -227,13 +218,9 @@ describe('dynamic-data with dynamic = "error"', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
 
       browser = await next.browser('/search?foo=foosearch')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /search with \`dynamic = "error"\` couldn't be rendered statically because it used \`searchParams.then\`. See more info here: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic#dynamic-rendering",
            "environmentLabel": "Server",
@@ -246,9 +233,6 @@ describe('dynamic-data with dynamic = "error"', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
     })
   } else {
     it('error when the build when `dynamic = "error"` and dynamic data is read', async () => {
@@ -304,8 +288,7 @@ describe('dynamic-data inside cache scope', () => {
 
     it('displays redbox when accessing dynamic data inside a cache scope', async () => {
       let browser = await next.browser('/cookies')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /cookies used "cookies" inside a function cached with "unstable_cache(...)". Accessing Dynamic data sources inside a cache scope is not supported. If you need this data inside a cached function use "cookies" outside of the cached function and pass the required dynamic data in as an argument. See more info here: https://nextjs.org/docs/app/api-reference/functions/unstable_cache",
            "environmentLabel": "Server",
@@ -319,13 +302,9 @@ describe('dynamic-data inside cache scope', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
 
       browser = await next.browser('/connection')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /connection used "connection" inside a function cached with "unstable_cache(...)". The \`connection()\` function is used to indicate the subsequent code must only run when there is an actual Request, but caches must be able to be produced before a Request so this function is not allowed in this scope. See more info here: https://nextjs.org/docs/app/api-reference/functions/unstable_cache",
            "environmentLabel": "Server",
@@ -339,13 +318,9 @@ describe('dynamic-data inside cache scope', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
 
       browser = await next.browser('/headers')
-      try {
-        await expect(browser).toDisplayRedbox(`
+      await expect(browser).toDisplayRedbox(`
          {
            "description": "Route /headers used "headers" inside a function cached with "unstable_cache(...)". Accessing Dynamic data sources inside a cache scope is not supported. If you need this data inside a cached function use "headers" outside of the cached function and pass the required dynamic data in as an argument. See more info here: https://nextjs.org/docs/app/api-reference/functions/unstable_cache",
            "environmentLabel": "Server",
@@ -359,9 +334,6 @@ describe('dynamic-data inside cache scope', () => {
            ],
          }
         `)
-      } finally {
-        await browser.close()
-      }
     })
   } else {
     it('error when the build when accessing dynamic data inside a cache scope', async () => {

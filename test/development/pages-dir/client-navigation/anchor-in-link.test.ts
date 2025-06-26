@@ -23,7 +23,6 @@ describe('Client Navigation', () => {
         .text()
 
       expect(text).toBe('This is the home.')
-      await browser.close()
     })
 
     it('should not navigate if the <a/> tag has a target', async () => {
@@ -40,7 +39,6 @@ describe('Client Navigation', () => {
       const counterText = await browser.elementByCss('#counter').text()
 
       expect(counterText).toBe('Counter: 1')
-      await browser.close()
     })
 
     it('should not navigate if the click-event is modified', async () => {
@@ -60,7 +58,6 @@ describe('Client Navigation', () => {
       const counterText = await browser.elementByCss('#counter').text()
 
       expect(counterText).toBe('Counter: 1')
-      await browser.close()
     })
 
     it('should not reload when link in svg is clicked', async () => {
@@ -72,7 +69,6 @@ describe('Client Navigation', () => {
         .waitForElementByCss('.nav-about')
 
       expect(await browser.eval('window.hello')).toBe(true)
-      await browser.close()
     })
   })
 
@@ -87,7 +83,6 @@ describe('Client Navigation', () => {
         .text()
 
       expect(text).toBe('This is the passHref prop page.')
-      await browser.close()
     })
 
     it('should redirect if passHref prop is defined in Link', async () => {
@@ -100,7 +95,6 @@ describe('Client Navigation', () => {
         .text()
 
       expect(text).toBe('This is the home.')
-      await browser.close()
     })
   })
 })

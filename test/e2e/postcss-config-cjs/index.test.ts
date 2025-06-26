@@ -12,15 +12,11 @@ describe('postcss-config-cjs', () => {
 
   it('works with postcss.config.cjs files', async () => {
     let browser = await next.browser('/')
-    try {
-      const text = await browser.elementByCss('.text-6xl').text()
-      expect(text).toMatch(/Welcome to/)
-      const cssBlue = await browser
-        .elementByCss('#test-link')
-        .getComputedCss('color')
-      expect(cssBlue).toBe('rgb(37, 99, 235)')
-    } finally {
-      await browser.close()
-    }
+    const text = await browser.elementByCss('.text-6xl').text()
+    expect(text).toMatch(/Welcome to/)
+    const cssBlue = await browser
+      .elementByCss('#test-link')
+      .getComputedCss('color')
+    expect(cssBlue).toBe('rgb(37, 99, 235)')
   })
 })

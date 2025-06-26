@@ -1,8 +1,8 @@
 import { nextTestSetup } from 'e2e-utils'
 import { retry, waitFor } from 'next-test-utils'
 import stripAnsi from 'strip-ansi'
-import { format } from 'util'
-import { Playwright } from 'next-webdriver'
+import { format } from 'node:util'
+import type { Playwright } from 'next-webdriver'
 import {
   createRenderResumeDataCache,
   RenderResumeDataCache,
@@ -29,11 +29,11 @@ describe('use-cache', () => {
     expect(await browser.waitForElementByCss('#x').text()).toBe('1')
     const random1a = await browser.waitForElementByCss('#y').text()
 
-    await browser.loadPage(new URL(`/?n=2`, next.url).toString())
+    await browser.goto(new URL(`/?n=2`, next.url).toString())
     expect(await browser.waitForElementByCss('#x').text()).toBe('2')
     const random2 = await browser.waitForElementByCss('#y').text()
 
-    await browser.loadPage(new URL(`/?n=1&unrelated`, next.url).toString())
+    await browser.goto(new URL(`/?n=1&unrelated`, next.url).toString())
     expect(await browser.waitForElementByCss('#x').text()).toBe('1')
     const random1b = await browser.waitForElementByCss('#y').text()
 
@@ -56,13 +56,11 @@ describe('use-cache', () => {
       expect(await browser.waitForElementByCss('#x').text()).toBe('1')
       const random1a = await browser.waitForElementByCss('#y').text()
 
-      await browser.loadPage(
-        new URL(`/custom-handler?n=2`, next.url).toString()
-      )
+      await browser.goto(new URL(`/custom-handler?n=2`, next.url).toString())
       expect(await browser.waitForElementByCss('#x').text()).toBe('2')
       const random2 = await browser.waitForElementByCss('#y').text()
 
-      await browser.loadPage(
+      await browser.goto(
         new URL(`/custom-handler?n=1&unrelated`, next.url).toString()
       )
       expect(await browser.waitForElementByCss('#x').text()).toBe('1')
@@ -85,17 +83,17 @@ describe('use-cache', () => {
     const a1a = await browser.waitForElementByCss('#x').text()
     expect(a1a.slice(0, 2)).toBe('a1')
 
-    await browser.loadPage(new URL('/complex-args?n=e2', next.url).toString())
+    await browser.goto(new URL('/complex-args?n=e2', next.url).toString())
     const e2a = await browser.waitForElementByCss('#x').text()
     expect(e2a.slice(0, 2)).toBe('e2')
 
     expect(a1a).not.toBe(e2a)
 
-    await browser.loadPage(new URL('/complex-args?n=a1', next.url).toString())
+    await browser.goto(new URL('/complex-args?n=a1', next.url).toString())
     const a1b = await browser.waitForElementByCss('#x').text()
     expect(a1b.slice(0, 2)).toBe('a1')
 
-    await browser.loadPage(new URL('/complex-args?n=e2', next.url).toString())
+    await browser.goto(new URL('/complex-args?n=e2', next.url).toString())
     const e2b = await browser.waitForElementByCss('#x').text()
     expect(e2b.slice(0, 2)).toBe('e2')
 
@@ -589,7 +587,7 @@ describe('use-cache', () => {
     const browser = await next.browser(`/form`)
     const time1 = await browser.waitForElementByCss('#t').text()
 
-    await browser.loadPage(new URL(`/form`, next.url).toString())
+    await browser.goto(new URL(`/form`, next.url).toString())
 
     const time2 = await browser.waitForElementByCss('#t').text()
 
@@ -605,7 +603,7 @@ describe('use-cache', () => {
 
     // Reloading again should ideally be the same value but because the Action seeds
     // the cache with real params as the argument it has a different cache key.
-    // await browser.loadPage(new URL(`/form?c`, next.url).toString())
+    // await browser.goto(new URL(`/form?c`, next.url).toString())
     // const time4 = await browser.waitForElementByCss('#t').text()
     // expect(time4).toBe(time3);
   })
@@ -758,21 +756,17 @@ describe('use-cache', () => {
       // Wait for the background revalidation after the deployment to settle.
       beforeAll(async () => {
         const browser = await next.browser('/draft-mode')
-        try {
-          const initialTopLevelValue = await browser
-            .elementById('top-level')
-            .text()
-          await retry(async () => {
-            await browser.refresh()
 
-            expect(await browser.elementById('top-level').text()).not.toBe(
-              initialTopLevelValue
-            )
-          })
-        } finally {
-          // we're not in a test, so the browser won't get cleaned up automatically.
-          await browser.close()
-        }
+        const initialTopLevelValue = await browser
+          .elementById('top-level')
+          .text()
+        await retry(async () => {
+          await browser.refresh()
+
+          expect(await browser.elementById('top-level').text()).not.toBe(
+            initialTopLevelValue
+          )
+        })
       })
     }
 
@@ -793,7 +787,7 @@ describe('use-cache', () => {
           // browser.refresh() seems to automatically resubmit POST requests,
           // so if we submitted an MPA action, it'll trigger the action again,
           // which in this case will toggle draftMode again.
-          await browser.get(new URL('/draft-mode', next.url).href)
+          await browser.goto(new URL('/draft-mode', next.url).href)
         } else {
           await browser.refresh()
         }
@@ -925,7 +919,7 @@ describe('use-cache', () => {
       // Load the page again and expect the cached logs to be replayed again.
       // We're using an explicit `loadPage` instead of `refresh` here, to start
       // with an empty set of logs.
-      await browser.loadPage(await browser.url())
+      await browser.goto(await browser.url())
 
       await retry(async () => {
         const newLogs = await getSanitizedLogs(browser)

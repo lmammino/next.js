@@ -39,34 +39,28 @@ describe('persistent-caching', () => {
     {
       const browser = await next.browser('/')
       appTimestamp = await browser.elementByCss('main').text()
-      await browser.close()
     }
     {
       const browser = await next.browser('/client')
       appClientTimestamp = await browser.elementByCss('main').text()
-      await browser.close()
     }
     {
       const browser = await next.browser('/pages')
       pagesTimestamp = await browser.elementByCss('main').text()
-      await browser.close()
     }
     await restartCycle()
 
     {
       const browser = await next.browser('/')
       expect(await browser.elementByCss('main').text()).toBe(appTimestamp)
-      await browser.close()
     }
     {
       const browser = await next.browser('/client')
       expect(await browser.elementByCss('main').text()).toBe(appClientTimestamp)
-      await browser.close()
     }
     {
       const browser = await next.browser('/pages')
       expect(await browser.elementByCss('main').text()).toBe(pagesTimestamp)
-      await browser.close()
     }
   })
 
@@ -77,22 +71,18 @@ describe('persistent-caching', () => {
         {
           const browser = await next.browser('/')
           expect(await browser.elementByCss('p').text()).toBe('hello world')
-          await browser.close()
         }
         {
           const browser = await next.browser('/client')
           expect(await browser.elementByCss('p').text()).toBe('hello world')
-          await browser.close()
         }
         {
           const browser = await next.browser('/pages')
           expect(await browser.elementByCss('p').text()).toBe('hello world')
-          await browser.close()
         }
         {
           const browser = await next.browser('/remove-me')
           expect(await browser.elementByCss('p').text()).toBe('hello world')
-          await browser.close()
         }
       }
 
@@ -106,26 +96,22 @@ describe('persistent-caching', () => {
           expect(await browser.elementByCss('p').text()).toBe(
             'hello persistent caching'
           )
-          await browser.close()
         }
         {
           const browser = await next.browser('/client')
           expect(await browser.elementByCss('p').text()).toBe(
             'hello persistent caching'
           )
-          await browser.close()
         }
         {
           const browser = await next.browser('/pages')
           expect(await browser.elementByCss('p').text()).toBe(
             'hello persistent caching'
           )
-          await browser.close()
         }
         {
           const browser = await next.browser('/add-me')
           expect(await browser.elementByCss('p').text()).toBe('hello world')
-          await browser.close()
         }
       }
 

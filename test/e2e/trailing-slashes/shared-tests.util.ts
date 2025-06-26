@@ -3,8 +3,6 @@
 // These tests are defined here and used in `app-dir.test.ts` and
 // `pages-dir.test.ts` so that both test suites can be run in parallel.
 
-import type { Playwright } from 'next-webdriver'
-
 import cheerio from 'cheerio'
 import type { NextInstance } from 'e2e-utils'
 
@@ -41,20 +39,15 @@ export function testShouldResolve(
   it.each(expectations)(
     '%s should client side render %s, with router path %s',
     async (route, expectedPage, expectedRouterPath) => {
-      let browser: Playwright | undefined
-      try {
-        browser = await next.browser(route)
+      const browser = await next.browser(route)
 
-        await browser.waitForElementByCss('#hydration-marker')
-        const text = await browser.elementByCss('#page-marker').text()
-        expect(text).toBe(expectedPage)
-        const routerPathname = await browser
-          .elementByCss('#router-pathname')
-          .text()
-        expect(routerPathname).toBe(expectedRouterPath)
-      } finally {
-        if (browser) await browser.close()
-      }
+      await browser.waitForElementByCss('#hydration-marker')
+      const text = await browser.elementByCss('#page-marker').text()
+      expect(text).toBe(expectedPage)
+      const routerPathname = await browser
+        .elementByCss('#router-pathname')
+        .text()
+      expect(routerPathname).toBe(expectedRouterPath)
     }
   )
 }
@@ -87,36 +80,26 @@ export function testLinkShouldRewriteTo(
   it.each(expectations)(
     '%s should navigate to %s',
     async (linkPage, expectedHref) => {
-      let browser: Playwright | undefined
-      try {
-        browser = await next.browser(linkPage)
-        await browser.elementByCss('#link').click()
+      const browser = await next.browser(linkPage)
+      await browser.elementByCss('#link').click()
 
-        await browser.waitForElementByCss('#hydration-marker')
-        const url = new URL(await browser.eval('window.location.href'))
-        const pathname = url.href.slice(url.origin.length)
-        expect(pathname).toBe(expectedHref)
-      } finally {
-        if (browser) await browser.close()
-      }
+      await browser.waitForElementByCss('#hydration-marker')
+      const url = new URL(await browser.eval('window.location.href'))
+      const pathname = url.href.slice(url.origin.length)
+      expect(pathname).toBe(expectedHref)
     }
   )
 
   it.each(expectations)(
     '%s should push route to %s',
     async (linkPage, expectedHref) => {
-      let browser: Playwright | undefined
-      try {
-        browser = await next.browser(linkPage)
-        await browser.elementByCss('#route-pusher').click()
+      const browser = await next.browser(linkPage)
+      await browser.elementByCss('#route-pusher').click()
 
-        await browser.waitForElementByCss('#hydration-marker')
-        const url = new URL(await browser.eval('window.location.href'))
-        const pathname = url.href.slice(url.origin.length)
-        expect(pathname).toBe(expectedHref)
-      } finally {
-        if (browser) await browser.close()
-      }
+      await browser.waitForElementByCss('#hydration-marker')
+      const url = new URL(await browser.eval('window.location.href'))
+      const pathname = url.href.slice(url.origin.length)
+      expect(pathname).toBe(expectedHref)
     }
   )
 }

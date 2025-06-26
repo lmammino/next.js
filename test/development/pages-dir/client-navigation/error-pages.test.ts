@@ -38,7 +38,6 @@ describe('Client navigation on error pages', () => {
       expect(await browser.elementByCss('h2').text()).toBe(
         'This page could not be found.'
       )
-      await browser.close()
     })
 
     it('should 404 on wrong casing', async () => {
@@ -47,13 +46,11 @@ describe('Client navigation on error pages', () => {
       expect(await browser.elementByCss('h2').text()).toBe(
         'This page could not be found.'
       )
-      await browser.close()
     })
 
     it('should get url dynamic param', async () => {
       const browser = await next.browser('/dynamic/dynamic-part/route')
       expect(await browser.elementByCss('p').text()).toBe('dynamic-part')
-      await browser.close()
     })
 
     it('should 404 on wrong casing of url dynamic param', async () => {
@@ -62,14 +59,12 @@ describe('Client navigation on error pages', () => {
       expect(await browser.elementByCss('h2').text()).toBe(
         'This page could not be found.'
       )
-      await browser.close()
     })
 
     it('should not 404 for <page>/', async () => {
       const browser = await next.browser('/nav/about/')
       const text = await browser.elementByCss('p').text()
       expect(text).toBe('This is the about page.')
-      await browser.close()
     })
 
     it('should should not contain a page script in a 404 page', async () => {
@@ -79,7 +74,6 @@ describe('Client navigation on error pages', () => {
         const src = await script.getAttribute('src')
         expect(src.includes('/non-existent')).toBeFalsy()
       }
-      await browser.close()
     })
   })
 })

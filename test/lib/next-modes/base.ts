@@ -11,9 +11,9 @@ import webdriver from '../next-webdriver'
 import { renderViaHTTP, fetchViaHTTP, findPort } from 'next-test-utils'
 import cheerio from 'cheerio'
 import { once } from 'events'
-import { Playwright } from 'next-webdriver'
 import escapeStringRegexp from 'escape-string-regexp'
-import { Page, Response } from 'playwright'
+import { Response } from 'playwright'
+import { Playwright } from '../browsers/playwright'
 
 type Event = 'stdout' | 'stderr' | 'error' | 'destroy'
 export type InstallCommand =
@@ -700,7 +700,7 @@ export class NextInstance {
     const [browser, response] = await Promise.all([
       webdriver(this.url, url, {
         ...options,
-        beforePageLoad(page: Page) {
+        beforePageLoad(page) {
           options.beforePageLoad?.(page)
 
           page.on('response', async (response) => {

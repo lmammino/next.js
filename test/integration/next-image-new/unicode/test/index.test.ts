@@ -118,9 +118,6 @@ describe('Image Component Unicode Image URL', () => {
       })
       afterAll(async () => {
         await killApp(app)
-        if (browser) {
-          browser.close()
-        }
       })
       runTests('dev')
     }
@@ -136,9 +133,6 @@ describe('Image Component Unicode Image URL', () => {
       })
       afterAll(async () => {
         await killApp(app)
-        if (browser) {
-          browser.close()
-        }
       })
       runTests('server')
     }

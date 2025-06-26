@@ -133,7 +133,7 @@ describe('segment-explorer', () => {
   })
 
   it('should show navigation boundaries of the segment', async () => {
-    const browser = await next.browser('/boundary?name=not-found')
+    let browser = await next.browser('/boundary?name=not-found')
     expect(await getSegmentExplorerContent(browser)).toMatchInlineSnapshot(`
      "app/
      layout.tsx
@@ -142,7 +142,7 @@ describe('segment-explorer', () => {
      not-found.tsx"
     `)
 
-    await browser.loadPage(`${next.url}/boundary?name=forbidden`)
+    browser = await next.browser(`${next.url}/boundary?name=forbidden`)
     expect(await getSegmentExplorerContent(browser)).toMatchInlineSnapshot(`
      "app/
      layout.tsx
@@ -151,7 +151,7 @@ describe('segment-explorer', () => {
      forbidden.tsx"
     `)
 
-    await browser.loadPage(`${next.url}/boundary?name=unauthorized`)
+    browser = await next.browser(`${next.url}/boundary?name=unauthorized`)
     expect(await getSegmentExplorerContent(browser)).toMatchInlineSnapshot(`
      "app/
      layout.tsx

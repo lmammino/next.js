@@ -29,20 +29,14 @@ describe('Legacy decorators SWC option', () => {
 
     it('should compile with legacy decorators enabled from extended config', async () => {
       let browser
-      try {
-        browser = await webdriver(next.url, '/')
-        const text = await browser.elementByCss('#count').text()
-        expect(text).toBe('Current number: 0')
-        await browser.elementByCss('#increase').click()
-        await check(
-          () => browser.elementByCss('#count').text(),
-          /Current number: 1/
-        )
-      } finally {
-        if (browser) {
-          await browser.close()
-        }
-      }
+      browser = await webdriver(next.url, '/')
+      const text = await browser.elementByCss('#count').text()
+      expect(text).toBe('Current number: 0')
+      await browser.elementByCss('#increase').click()
+      await check(
+        () => browser.elementByCss('#count').text(),
+        /Current number: 1/
+      )
     })
   })
 
@@ -66,20 +60,14 @@ describe('Legacy decorators SWC option', () => {
 
     it('should compile with legacy decorators enabled', async () => {
       let browser
-      try {
-        browser = await webdriver(next.url, '/')
-        const text = await browser.elementByCss('#count').text()
-        expect(text).toBe('Current number: 0')
-        await browser.elementByCss('#increase').click()
-        await check(
-          () => browser.elementByCss('#count').text(),
-          /Current number: 1/
-        )
-      } finally {
-        if (browser) {
-          await browser.close()
-        }
-      }
+      browser = await webdriver(next.url, '/')
+      const text = await browser.elementByCss('#count').text()
+      expect(text).toBe('Current number: 0')
+      await browser.elementByCss('#increase').click()
+      await check(
+        () => browser.elementByCss('#count').text(),
+        /Current number: 1/
+      )
     })
   })
 })

@@ -469,7 +469,7 @@ describe('app dir - navigation', () => {
         )
 
         // Now check the logs...
-        await browser.get(
+        await browser.goto(
           `${next.url}/redirect/external-log/${storageKey}?read=1`
         )
         const stored = JSON.parse(await browser.elementByCss('pre').text())
@@ -616,7 +616,7 @@ describe('app dir - navigation', () => {
       )
 
       // Now check the logs...
-      await browser.get(`${next.url}/external-push/${storageKey}`)
+      await browser.goto(`${next.url}/external-push/${storageKey}`)
       const stored = JSON.parse(await browser.elementByCss('pre').text())
       let expected = {
         // Only one navigation

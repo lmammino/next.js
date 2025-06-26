@@ -80,14 +80,8 @@ function runTestsAgainstRuntime(runtime) {
     (context, env) => {
       async function withBrowser(path, cb) {
         let browser
-        try {
-          browser = await webdriver(context.appPort, path)
-          await cb(browser)
-        } finally {
-          if (browser) {
-            await browser.close()
-          }
-        }
+        browser = await webdriver(context.appPort, path)
+        await cb(browser)
       }
 
       it('flushes styled-jsx styles as the page renders', async () => {

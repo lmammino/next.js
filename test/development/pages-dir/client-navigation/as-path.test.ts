@@ -23,7 +23,6 @@ describe('Client navigation with asPath', () => {
         .text()
 
       expect(asPath).toBe('/as/path')
-      await browser.close()
     })
 
     it('should show the correct asPath with a Link without the as prop', async () => {
@@ -36,7 +35,6 @@ describe('Client navigation with asPath', () => {
         .text()
 
       expect(asPath).toBe('/nav/as-path')
-      await browser.close()
     })
   })
 
@@ -51,7 +49,6 @@ describe('Client navigation with asPath', () => {
         .text()
 
       expect(asPath).toBe('/nav/as-path-using-router')
-      await browser.close()
     })
 
     it('should navigate an absolute url on push', async () => {

@@ -84,7 +84,7 @@ describe.each([['', '/docs']])(
           })
 
           // ensure different host is blocked
-          await browser.get(`https://example.vercel.sh/`)
+          await browser.goto(`https://example.vercel.sh/`)
           await browser.eval(websocketSnippet)
           await retry(async () => {
             expect(await browser.elementByCss('#status').text()).toBe(
@@ -130,7 +130,7 @@ describe.each([['', '/docs']])(
           })
 
           // ensure different host is blocked
-          await browser.get(`https://example.vercel.sh/`)
+          await browser.goto(`https://example.vercel.sh/`)
           await browser.eval(scriptSnippet)
 
           await retry(async () => {
@@ -236,7 +236,7 @@ describe.each([['', '/docs']])(
           })
 
           // ensure different host is blocked
-          await browser.get(`https://example.vercel.sh/`)
+          await browser.goto(`https://example.vercel.sh/`)
           await browser.eval(websocketSnippet)
           await retry(async () => {
             expect(await browser.elementByCss('#status').text()).toBe('error')
@@ -274,7 +274,7 @@ describe.each([['', '/docs']])(
           })
 
           // ensure different host is blocked
-          await browser.get(`https://example.vercel.sh/`)
+          await browser.goto(`https://example.vercel.sh/`)
           await browser.eval(scriptSnippet)
 
           await retry(async () => {

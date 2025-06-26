@@ -96,7 +96,7 @@ describe('fallback-shells', () => {
               )
 
               // `/bar` was not prerendered, and thus resumes the fallback shell.
-              await browser.loadPage(
+              await browser.goto(
                 new URL(
                   '/with-cached-io/with-static-params/with-suspense/params-in-page/bar',
                   next.url
@@ -130,7 +130,7 @@ describe('fallback-shells', () => {
               )
 
               // `/bar` was not prerendered, and thus resumes the fallback shell.
-              await browser.loadPage(
+              await browser.goto(
                 new URL(
                   '/with-cached-io/with-static-params/with-suspense/params-in-page/bar',
                   next.url

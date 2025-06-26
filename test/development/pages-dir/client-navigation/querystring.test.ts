@@ -23,7 +23,6 @@ describe('Client navigation querystring', () => {
         .text()
 
       expect(text).toBe('2')
-      await browser.close()
     })
 
     it('should remove querystring', async () => {
@@ -36,7 +35,6 @@ describe('Client navigation querystring', () => {
         .text()
 
       expect(text).toBe('0')
-      await browser.close()
     })
   })
 
