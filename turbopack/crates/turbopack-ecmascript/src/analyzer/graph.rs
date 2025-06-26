@@ -799,6 +799,7 @@ pub fn is_in_try(ast_path: &AstNodePath<AstParentNodeRef<'_>>) -> bool {
         .find_map(|ast_ref| match ast_ref.kind() {
             AstParentKind::ArrowExpr(ArrowExprField::Body) => Some(false),
             AstParentKind::Function(FunctionField::Body) => Some(false),
+            AstParentKind::Constructor(ConstructorField::Body) => Some(false),
             AstParentKind::ClassMethod(ClassMethodField::Function) => Some(false),
             AstParentKind::MethodProp(MethodPropField::Function) => Some(false),
             AstParentKind::TryStmt(TryStmtField::Block) => Some(true),
@@ -1927,6 +1928,7 @@ impl VisitAstPath for Analyzer<'_> {
             matches!(
                 node.kind(),
                 AstParentKind::MethodProp(MethodPropField::Function)
+                    | AstParentKind::Constructor(ConstructorField::Body)
                     | AstParentKind::ClassMethod(ClassMethodField::Function)
                     | AstParentKind::Function(FunctionField::Body)
             )
