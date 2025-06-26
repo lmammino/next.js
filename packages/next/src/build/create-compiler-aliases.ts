@@ -271,13 +271,10 @@ export function createRSCAliases(
     reactProductionProfiling: boolean
   }
 ): CompilerAliases {
-  const isServerOnlyLayer = isWebpackServerOnlyLayer(layer)
   // For middleware, instrumentation layers, treat them as rsc layer.
   // Since we only built the runtime package for rsc, convert everything to rsc
   // to ensure the runtime modules path existed.
-  if (isServerOnlyLayer) {
-    layer = WEBPACK_LAYERS.reactServerComponents
-  }
+  const isReactServerEnvironment = isWebpackServerOnlyLayer(layer)
 
   let alias: Record<string, string> = {
     react$: `next/dist/compiled/react${bundledReactChannel}`,
@@ -286,19 +283,20 @@ export function createRSCAliases(
     'react/jsx-dev-runtime$': `next/dist/compiled/react${bundledReactChannel}/jsx-dev-runtime`,
     'react/compiler-runtime$': `next/dist/compiled/react${bundledReactChannel}/compiler-runtime`,
     'react-dom/client$': `next/dist/compiled/react-dom${bundledReactChannel}/client`,
-    'react-dom/server$': `next/dist/compiled/react-dom${bundledReactChannel}/server`,
-    'react-dom/server.browser$': `next/dist/compiled/react-dom${bundledReactChannel}/server.browser`,
-    'react-dom/static$': `next/dist/compiled/react-dom${bundledReactChannel}/static`,
+    'react-dom/static$': `next/dist/compiled/react-dom${bundledReactChannel}/static.edge`,
     'react-dom/static.edge$': `next/dist/compiled/react-dom${bundledReactChannel}/static.edge`,
-    'react-dom/static.browser$': `next/dist/compiled/react-dom${bundledReactChannel}/static.browser`,
-    // optimizations to ignore the legacy build of react-dom/server in `server.edge` build
-    'react-dom/server.edge$': `next/dist/build/webpack/alias/react-dom-server-edge${bundledReactChannel}.js`,
+    'react-dom/static.node$': `next/dist/compiled/react-dom${bundledReactChannel}/static.node`,
+    // TODO: Vendor react-dom/static.browser
+    // optimizations to ignore the legacy APIs in react-dom/server
+    'react-dom/server$': `next/dist/build/webpack/alias/react-dom-server${bundledReactChannel}.js`,
+    'react-dom/server.edge$': `next/dist/build/webpack/alias/react-dom-server${bundledReactChannel}.js`,
+    'react-dom/server.node$': `next/dist/build/webpack/alias/react-dom-server${bundledReactChannel}.js`,
+    'react-dom/server.browser$': `next/dist/compiled/react-dom${bundledReactChannel}/server.browser`,
     // react-server-dom-webpack alias
-    'react-server-dom-webpack/client$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/client`,
-    'react-server-dom-webpack/client.edge$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/client.edge`,
-    'react-server-dom-webpack/server.edge$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/server.edge`,
-    'react-server-dom-webpack/server.node$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/server.node`,
-    'react-server-dom-webpack/static.edge$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/static.edge`,
+    'react-server-dom-webpack/client$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/client.browser`,
+    // TODO: Should we alias these to throwers
+    'react-server-dom-webpack/server$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/server.edge`,
+    'react-server-dom-webpack/static$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/static.edge`,
   }
 
   if (!isEdgeServer) {
@@ -309,24 +307,26 @@ export function createRSCAliases(
         'react/compiler-runtime$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-compiler-runtime`,
         react$: `next/dist/server/route-modules/app-page/vendored/${layer}/react`,
         'react-dom$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-dom`,
-        'react-server-dom-webpack/client.edge$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-client-edge`,
+        'react-dom/static$': `next/dist/compiled/react-dom${bundledReactChannel}/static.node`,
+        'react-server-dom-webpack/client$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-client`,
       })
-    } else if (layer === WEBPACK_LAYERS.reactServerComponents) {
+    } else if (isReactServerEnvironment) {
       alias = Object.assign(alias, {
         'react/jsx-runtime$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-jsx-runtime`,
         'react/jsx-dev-runtime$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-jsx-dev-runtime`,
         'react/compiler-runtime$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-compiler-runtime`,
         react$: `next/dist/server/route-modules/app-page/vendored/${layer}/react`,
         'react-dom$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-dom`,
-        'react-server-dom-webpack/server.edge$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-server-edge`,
-        'react-server-dom-webpack/server.node$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-server-node`,
-        'react-server-dom-webpack/static.edge$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-static-edge`,
+        // TODO: vendored?
+        'react-server-dom-webpack/client$': `next/dist/compiled/react-server-dom-webpack${bundledReactChannel}/client.node`,
+        'react-server-dom-webpack/server$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-server`,
+        'react-server-dom-webpack/static$': `next/dist/server/route-modules/app-page/vendored/${layer}/react-server-dom-webpack-static`,
       })
     }
   }
 
   if (isEdgeServer) {
-    if (layer === WEBPACK_LAYERS.reactServerComponents) {
+    if (isReactServerEnvironment) {
       alias = Object.assign(alias, {
         react$: `next/dist/compiled/react${bundledReactChannel}/react.react-server`,
         'next/dist/compiled/react$': `next/dist/compiled/react${bundledReactChannel}/react.react-server`,

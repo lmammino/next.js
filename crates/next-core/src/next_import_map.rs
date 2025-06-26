@@ -756,8 +756,8 @@ async fn rsc_aliases(
                     "react/compiler-runtime" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react-compiler-runtime"),
                     "react" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react"),
                     "react-dom" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react-dom"),
-                    "react-server-dom-webpack/client.edge" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react-server-dom-turbopack-client-edge"),
-                    "react-server-dom-turbopack/client.edge" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react-server-dom-turbopack-client-edge"),
+                    "react-server-dom-webpack/client" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react-server-dom-turbopack-client"),
+                    "react-server-dom-turbopack/client" => format!("next/dist/server/route-modules/app-page/vendored/ssr/react-server-dom-turbopack-client"),
                 });
             }
             ServerContextType::AppRSC { .. }

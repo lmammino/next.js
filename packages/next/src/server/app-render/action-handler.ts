@@ -49,7 +49,7 @@ import { selectWorkerForForwarding } from './action-utils'
 import { isNodeNextRequest, isWebNextRequest } from '../base-http/helpers'
 import { RedirectStatusCode } from '../../client/components/redirect-status-code'
 import { synchronizeMutableCookies } from '../async-storage/request-store'
-import type { TemporaryReferenceSet } from 'react-server-dom-webpack/server.edge'
+import type { TemporaryReferenceSet } from 'react-server-dom-webpack/server'
 import { workUnitAsyncStorage } from '../app-render/work-unit-async-storage.external'
 import { InvariantError } from '../../shared/lib/invariant-error'
 import { executeRevalidates } from '../revalidation-utils'
@@ -661,7 +661,7 @@ export async function handleAction({
 
           // TODO: add body limit
 
-          // Use react-server-dom-webpack/server.edge
+          // Use react-server-dom-webpack/server
           const {
             createTemporaryReferenceSet,
             decodeReply,
