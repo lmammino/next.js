@@ -1536,6 +1536,9 @@ async fn compile_time_info_for_module_type(
             )
         },
     ));
+    // A 'free' reference to `this` in an ESM module is meant to be `undefined`
+    // Compile time replace it so we can represent module-factories as arrow functions without needing to be defensive about rebinding this.
+    // Do the same for CJS modules while we are here.
     let this = rcstr!("this");
     free_var_references
         .entry(vec![DefineableNameSegment::Name(this.clone())])
