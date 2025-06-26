@@ -250,8 +250,7 @@ useLightningcss: ${useLightningcss}
     })
 
     it('should have the correct color (css ordering) during hot reloads', async () => {
-      let browser
-      browser = await webdriver(appPort, '/')
+      let browser = await webdriver(appPort, '/')
       const blueColor = await browser.eval(
         `window.getComputedStyle(document.querySelector('#blueText')).color`
       )

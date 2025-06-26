@@ -464,8 +464,7 @@ function runTests({ dev }) {
     })
 
     it('should not have any console warnings when navigating to dynamic route', async () => {
-      let browser
-      browser = await webdriver(appPort, '/')
+      let browser = await webdriver(appPort, '/')
       await browser.eval('window.beforeNav = 1')
       await browser.elementByCss('#dynamic-route-no-as').click()
       await browser.waitForElementByCss('#asdf')

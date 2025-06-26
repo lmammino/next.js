@@ -282,8 +282,7 @@ describe('static export', () => {
     })
 
     it('should render pages with url hash correctly', async () => {
-      let browser
-      browser = await webdriver(port, '/')
+      let browser = await webdriver(port, '/')
       const text = await browser
         .elementByCss('#with-hash')
         .click()
@@ -295,8 +294,7 @@ describe('static export', () => {
     })
 
     it('should render 404 when visiting a page that returns notFound from gsp', async () => {
-      let browser
-      browser = await webdriver(port, '/')
+      let browser = await webdriver(port, '/')
       const text = await browser
         .elementByCss('#gsp-notfound-link')
         .click()

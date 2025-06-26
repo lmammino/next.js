@@ -83,8 +83,7 @@ const startServer = async (optEnv = {}, opts) => {
     })
 
     it('should navigate to pages with dynamic imports', async () => {
-      let browser
-      browser = await webdriver(context.appPort, '/nav')
+      let browser = await webdriver(context.appPort, '/nav')
       await browser.eval('document.getElementById("to-dynamic").click()')
       await check(async () => {
         const text = await getBrowserBodyText(browser)

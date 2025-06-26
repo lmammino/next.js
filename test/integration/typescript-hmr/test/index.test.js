@@ -33,8 +33,7 @@ describe('TypeScript HMR', () => {
 
   describe('delete a page and add it back', () => {
     it('should detect the changes to typescript pages and display it', async () => {
-      let browser
-      browser = await webdriver(appPort, '/hello')
+      let browser = await webdriver(appPort, '/hello')
       await check(() => getBrowserBodyText(browser), /Hello World/)
       const pagePath = join(appDir, 'pages/hello.tsx')
       const originalContent = await fs.readFile(pagePath, 'utf8')

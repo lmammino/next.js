@@ -323,8 +323,7 @@ const context = {}
     })
 
     it.skip('should detect the changes and display it', async () => {
-      let browser
-      browser = await webdriver(dynamicAppPort, '/hmr/test')
+      let browser = await webdriver(dynamicAppPort, '/hmr/test')
       const text = await browser.elementByCss('p').text()
       expect(text).toBe('This is the hot AMP page.')
       const hmrTestPagePath = join(__dirname, '../', 'pages', 'hmr', 'test.js')
@@ -340,8 +339,7 @@ const context = {}
     })
 
     it.skip('should detect changes and refresh an AMP page', async () => {
-      let browser
-      browser = await webdriver(dynamicAppPort, '/hmr/amp')
+      let browser = await webdriver(dynamicAppPort, '/hmr/amp')
       const text = await browser.elementByCss('p').text()
       expect(text).toBe(`I'm an AMP page!`)
       const hmrTestPagePath = join(__dirname, '../', 'pages', 'hmr', 'amp.js')
@@ -427,8 +425,7 @@ const context = {}
     })
 
     it.skip('should detect changes and refresh a hybrid AMP page', async () => {
-      let browser
-      browser = await webdriver(dynamicAppPort, '/hmr/hybrid?amp=1')
+      let browser = await webdriver(dynamicAppPort, '/hmr/hybrid?amp=1')
       const text = await browser.elementByCss('p').text()
       expect(text).toBe(`I'm a hybrid AMP page!`)
       const hmrTestPagePath = join(
@@ -450,8 +447,7 @@ const context = {}
     })
 
     it.skip('should detect changes and refresh an AMP page at root pages/', async () => {
-      let browser
-      browser = await webdriver(dynamicAppPort, '/root-hmr')
+      let browser = await webdriver(dynamicAppPort, '/root-hmr')
       const text = await browser.elementByCss('p').text()
       expect(text).toBe(`I'm an AMP page!`)
       const hmrTestPagePath = join(__dirname, '../', 'pages', 'root-hmr.js')

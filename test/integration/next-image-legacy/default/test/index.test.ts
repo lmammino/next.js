@@ -1041,8 +1041,7 @@ function runTests(mode) {
   // Tests that use the `unsized` attribute:
   if (mode !== 'dev') {
     it('should correctly rotate image', async () => {
-      let browser
-      browser = await webdriver(appPort, '/rotated')
+      let browser = await webdriver(appPort, '/rotated')
       const id = 'exif-rotation-image'
       await check(async () => {
         const result = await browser.eval(

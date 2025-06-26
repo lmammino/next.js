@@ -28,8 +28,7 @@ describe('Legacy decorators SWC option', () => {
     afterAll(() => next.destroy())
 
     it('should compile with legacy decorators enabled from extended config', async () => {
-      let browser
-      browser = await webdriver(next.url, '/')
+      let browser = await webdriver(next.url, '/')
       const text = await browser.elementByCss('#count').text()
       expect(text).toBe('Current number: 0')
       await browser.elementByCss('#increase').click()
@@ -59,8 +58,7 @@ describe('Legacy decorators SWC option', () => {
     afterAll(() => next.destroy())
 
     it('should compile with legacy decorators enabled', async () => {
-      let browser
-      browser = await webdriver(next.url, '/')
+      let browser = await webdriver(next.url, '/')
       const text = await browser.elementByCss('#count').text()
       expect(text).toBe('Current number: 0')
       await browser.elementByCss('#increase').click()
