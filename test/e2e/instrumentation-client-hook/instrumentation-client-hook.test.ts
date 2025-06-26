@@ -39,7 +39,7 @@ describe('Instrumentation Client Hook', () => {
         expect(hydrationTime).toBeDefined()
         expect(instrumentationTime).toBeLessThan(hydrationTime)
         expect(
-          (await browser.logs()).some((log) =>
+          (await browser.log()).some((log) =>
             log.message.startsWith(
               '[Client Instrumentation Hook] Slow execution detected'
             )
@@ -75,7 +75,7 @@ describe('Instrumentation Client Hook', () => {
       await linkToHome.click()
       await browser.elementById('home')
 
-      expect(filterNavigationStartLogs(await browser.logs())).toEqual([
+      expect(filterNavigationStartLogs(await browser.log())).toEqual([
         '[Router Transition Start] [push] /some-page',
         '[Router Transition Start] [push] /',
       ])
@@ -94,7 +94,7 @@ describe('Instrumentation Client Hook', () => {
       await browser.forward()
       await browser.elementById('some-page')
 
-      expect(filterNavigationStartLogs(await browser.logs())).toEqual([
+      expect(filterNavigationStartLogs(await browser.log())).toEqual([
         '[Router Transition Start] [push] /some-page',
         '[Router Transition Start] [traverse] /',
         '[Router Transition Start] [traverse] /some-page',

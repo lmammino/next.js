@@ -1741,7 +1741,7 @@ export function createNowRouteMatches(
 }
 
 export async function assertNoConsoleErrors(browser: Playwright) {
-  const logs = await browser.logs()
+  const logs = await browser.log()
   const warningsAndErrors = logs.filter((log) => {
     return (
       log.source === 'warning' ||

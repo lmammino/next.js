@@ -515,7 +515,7 @@ export class Playwright<TCurrent = void> {
   }
 
   private readonly _logs: Array<Promise<PageLog> | PageLog> = []
-  async logs<T extends boolean = false>(options?: { includeArgs?: T }) {
+  async log<T extends boolean = false>(options?: { includeArgs?: T }) {
     return this.startChain(
       () =>
         options?.includeArgs

@@ -80,7 +80,7 @@ describe(`app-dir-hmr`, () => {
           await browser.eval('window.__TEST_NO_RELOAD === undefined')
         ).toBe(false)
 
-        const logs = await browser.logs()
+        const logs = await browser.log()
         const fastRefreshLogs = logs.filter((log) => {
           return log.message.startsWith('[Fast Refresh]')
         })
@@ -125,7 +125,7 @@ describe(`app-dir-hmr`, () => {
         .click()
         .waitForElementByCss('[data-testid="new-runtime-functionality-page"]')
 
-      const logs = await browser.logs()
+      const logs = await browser.log()
       // TODO: Should assert on all logs but these are cluttered with logs from our test utils (e.g. playwright tracing or webdriver)
       expect(logs).toEqual(
         expect.arrayContaining([

@@ -36,7 +36,7 @@ import { retry } from 'next-test-utils'
       )
 
       await retry(async () => {
-        const logs = await browser.logs()
+        const logs = await browser.log()
         expect(logs).toEqual(
           expect.arrayContaining([
             {

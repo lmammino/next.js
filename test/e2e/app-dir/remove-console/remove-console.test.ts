@@ -9,7 +9,7 @@ describe('remove-console', () => {
     const browser = await next.browser('/')
     expect(await browser.elementByCss('p').text()).toBe('hello client')
 
-    const logs = await browser.logs()
+    const logs = await browser.log()
 
     expect(logs).not.toContainEqual({
       source: 'log',

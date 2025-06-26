@@ -97,7 +97,7 @@ describe('Invalid hrefs', () => {
         const browser = await webdriver(appPort, '/exotic-href')
 
         expect(
-          (await browser.logs()).filter((x) => x.source === 'error')
+          (await browser.log()).filter((x) => x.source === 'error')
         ).toEqual([])
       })
 
@@ -163,7 +163,7 @@ describe('Invalid hrefs', () => {
         const browser = await webdriver(appPort, '/exotic-href')
 
         expect(
-          (await browser.logs()).filter((x) => x.source === 'error')
+          (await browser.log()).filter((x) => x.source === 'error')
         ).toEqual([])
       })
 

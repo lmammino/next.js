@@ -85,7 +85,7 @@ describe('app-dir action handling', () => {
     await browser.elementByCss('#submit').click()
 
     await retry(async () => {
-      const logs = await browser.logs()
+      const logs = await browser.log()
 
       expect(logs).toMatchObject(
         expect.arrayContaining([
@@ -797,7 +797,7 @@ describe('app-dir action handling', () => {
     expect(await browser.elementById('submitted-msg').text()).toBe('Submitted!')
 
     // Verify that the catch log was printed
-    const logs = await browser.logs()
+    const logs = await browser.log()
     expect(
       logs.some((log) => log.message === 'error caught in user code')
     ).toBe(true)
@@ -812,7 +812,7 @@ describe('app-dir action handling', () => {
     expect(await browser.elementById('submitted-msg').text()).toBe('Submitted!')
 
     // Verify that the catch log was printed
-    const logs = await browser.logs()
+    const logs = await browser.log()
     expect(
       logs.some((log) => log.message === 'error caught in user code')
     ).toBe(true)

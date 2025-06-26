@@ -14,7 +14,7 @@ describe('asset-prefix', () => {
     expect(await browser.elementByCss('#text').text()).toBe('Hello World')
 
     await check(async () => {
-      const logs = await browser.logs()
+      const logs = await browser.log()
       const hasError = logs.some((log) =>
         log.message.includes('Failed to fetch')
       )

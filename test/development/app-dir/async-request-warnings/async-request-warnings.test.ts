@@ -10,7 +10,7 @@ describe('dynamic-requests warnings', () => {
 
     const browser = await next.browser('/request/cookies')
 
-    const browserLogs = await browser.logs()
+    const browserLogs = await browser.log()
     const browserConsoleWarnings = browserLogs
       .filter((log) => log.source === 'warning')
       .map((log) => log.message)
@@ -39,7 +39,7 @@ describe('dynamic-requests warnings', () => {
 
     const browser = await next.browser('/request/draftMode')
 
-    const browserLogs = await browser.logs()
+    const browserLogs = await browser.log()
     const browserConsoleWarnings = browserLogs
       .filter((log) => log.source === 'warning')
       .map((log) => log.message)
@@ -68,7 +68,7 @@ describe('dynamic-requests warnings', () => {
 
     const browser = await next.browser('/request/headers')
 
-    const browserLogs = await browser.logs()
+    const browserLogs = await browser.log()
     const browserConsoleWarnings = browserLogs
       .filter((log) => log.source === 'warning')
       .map((log) => log.message)
@@ -97,7 +97,7 @@ describe('dynamic-requests warnings', () => {
 
     const browser = await next.browser('/request/params/[slug]')
 
-    const browserLogs = await browser.logs()
+    const browserLogs = await browser.log()
     const browserConsoleWarnings = browserLogs
       .filter((log) => log.source === 'warning')
       .map((log) => log.message)
@@ -126,7 +126,7 @@ describe('dynamic-requests warnings', () => {
 
     const browser = await next.browser('/request/searchParams')
 
-    const browserLogs = await browser.logs()
+    const browserLogs = await browser.log()
     const browserConsoleWarnings = browserLogs
       .filter((log) => log.source === 'warning')
       .map((log) => log.message)
@@ -153,7 +153,7 @@ describe('dynamic-requests warnings', () => {
   describe('no warnings', () => {
     it('should have no warnings on normal rsc page without accessing params', async () => {
       const browser = await next.browser('/no-access/normal')
-      const browserLogItems = await browser.logs()
+      const browserLogItems = await browser.log()
       const browserConsoleWarnings = browserLogItems
         .filter((log) => log.source === 'warning')
         .map((log) => log.message)
@@ -163,7 +163,7 @@ describe('dynamic-requests warnings', () => {
 
     it('should only have hydration warnings on hydration mismatch page without accessing params', async () => {
       const browser = await next.browser('/no-access/mismatch')
-      const browserLogItems = await browser.logs()
+      const browserLogItems = await browser.log()
       console.log('browserLogItems', browserLogItems)
       const browserConsoleWarnings = browserLogItems
         .filter((log) => log.source === 'warning')

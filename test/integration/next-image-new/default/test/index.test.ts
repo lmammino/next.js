@@ -220,7 +220,7 @@ function runTests(mode) {
     expect(
       await browser.elementById('belowthefold').getAttribute('loading')
     ).toBe(null)
-    const warnings = (await browser.logs()).map((log) => log.message).join('\n')
+    const warnings = (await browser.log()).map((log) => log.message).join('\n')
     expect(warnings).not.toMatch(
       /was detected as the Largest Contentful Paint/gm
     )
@@ -347,7 +347,7 @@ function runTests(mode) {
     )
 
     if (mode === 'dev') {
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       expect(warnings).toMatch(
@@ -597,7 +597,7 @@ function runTests(mode) {
     )
     if (mode === 'dev') {
       await waitFor(1000)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       expect(warnings).toMatch(
@@ -734,7 +734,7 @@ function runTests(mode) {
     )
     if (mode === 'dev') {
       await assertNoRedbox(browser)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       expect(warnings).toContain(
@@ -766,7 +766,7 @@ function runTests(mode) {
     )
     if (mode === 'dev') {
       await assertNoRedbox(browser)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       expect(warnings).toContain(
@@ -818,7 +818,7 @@ function runTests(mode) {
       await assertNoRedbox(browser)
 
       await check(async () => {
-        return (await browser.logs()).map((log) => log.message).join('\n')
+        return (await browser.log()).map((log) => log.message).join('\n')
       }, /Image is missing required "src" property/gm)
     })
 
@@ -828,7 +828,7 @@ function runTests(mode) {
       await assertNoRedbox(browser)
 
       await check(async () => {
-        return (await browser.logs()).map((log) => log.message).join('\n')
+        return (await browser.log()).map((log) => log.message).join('\n')
       }, /Image is missing required "src" property/gm)
     })
 
@@ -839,7 +839,7 @@ function runTests(mode) {
 
       await retry(async () => {
         expect(
-          (await browser.logs()).map((log) => log.message).join('\n')
+          (await browser.log()).map((log) => log.message).join('\n')
         ).toMatch(/Image is missing required "src" property/gm)
       })
     })
@@ -920,7 +920,7 @@ function runTests(mode) {
       await assertNoRedbox(browser)
 
       await check(async () => {
-        return (await browser.logs()).map((log) => log.message).join('\n')
+        return (await browser.log()).map((log) => log.message).join('\n')
       }, /Image is missing required "alt" property/gm)
     })
 
@@ -975,7 +975,7 @@ function runTests(mode) {
     it('should warn when using a very small image with placeholder=blur', async () => {
       const browser = await webdriver(appPort, '/small-img-import')
 
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -987,7 +987,7 @@ function runTests(mode) {
     it('should not warn when Image is child of p', async () => {
       const browser = await webdriver(appPort, '/inside-paragraph')
 
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1009,7 +1009,7 @@ function runTests(mode) {
         return 'done'
       }, 'done')
       await waitFor(1000)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1021,7 +1021,7 @@ function runTests(mode) {
     it('should warn when loader is missing width', async () => {
       const browser = await webdriver(appPort, '/invalid-loader')
       await browser.eval(`document.querySelector("footer").scrollIntoView()`)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1044,7 +1044,7 @@ function runTests(mode) {
 
     it('should not warn when data url image with fill and sizes props', async () => {
       const browser = await webdriver(appPort, '/data-url-with-fill-and-sizes')
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1056,7 +1056,7 @@ function runTests(mode) {
     it('should not warn when svg, even if with loader prop or without', async () => {
       const browser = await webdriver(appPort, '/loader-svg')
       await browser.eval(`document.querySelector("footer").scrollIntoView()`)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .join('\n')
       await assertNoRedbox(browser)
@@ -1096,7 +1096,7 @@ function runTests(mode) {
         return 'done'
       }, 'done')
       await waitFor(1000)
-      const warnings = (await browser.logs())
+      const warnings = (await browser.log())
         .map((log) => log.message)
         .filter((log) => log.startsWith('Image with src'))
       expect(warnings[0]).toMatch(
@@ -1114,7 +1114,7 @@ function runTests(mode) {
     it('should render as unoptimized with missing src prop', async () => {
       const browser = await webdriver(appPort, '/missing-src')
 
-      const warnings = (await browser.logs()).filter(
+      const warnings = (await browser.log()).filter(
         (log) => log.source === 'error'
       )
 
@@ -1132,7 +1132,7 @@ function runTests(mode) {
     it('should render as unoptimized with empty string src prop', async () => {
       const browser = await webdriver(appPort, '/empty-string-src')
 
-      const warnings = (await browser.logs()).filter(
+      const warnings = (await browser.log()).filter(
         (log) => log.source === 'error'
       )
       expect(warnings).toEqual([])
@@ -1280,7 +1280,7 @@ function runTests(mode) {
     if (mode === 'dev') {
       it('should not log incorrect warnings', async () => {
         await waitFor(1000)
-        const warnings = (await browser.logs())
+        const warnings = (await browser.log())
           .map((log) => log.message)
           .join('\n')
         expect(warnings).not.toMatch(/Image with src (.*) has "fill"/gm)
@@ -1291,7 +1291,7 @@ function runTests(mode) {
       it('should log warnings when using fill mode incorrectly', async () => {
         browser = await webdriver(appPort, '/fill-warnings')
         await waitFor(1000)
-        const warnings = (await browser.logs())
+        const warnings = (await browser.log())
           .map((log) => log.message)
           .join('\n')
         expect(warnings).toContain(
@@ -1310,7 +1310,7 @@ function runTests(mode) {
       it('should not log warnings when image unmounts', async () => {
         browser = await webdriver(appPort, '/should-not-warn-unmount')
         await waitFor(1000)
-        const warnings = (await browser.logs())
+        const warnings = (await browser.log())
           .map((log) => log.message)
           .join('\n')
         expect(warnings).not.toContain(

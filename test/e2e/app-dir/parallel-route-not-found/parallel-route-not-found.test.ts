@@ -7,7 +7,7 @@ describe('parallel-route-not-found', () => {
 
   it('should handle a layout that attempts to render a missing parallel route', async () => {
     const browser = await next.browser('/no-bar-slot')
-    const logs = await browser.logs()
+    const logs = await browser.log()
     expect(await browser.elementByCss('body').text()).toContain(
       'This page could not be found'
     )
@@ -25,7 +25,7 @@ describe('parallel-route-not-found', () => {
 
   it('should handle multiple missing parallel routes', async () => {
     const browser = await next.browser('/both-slots-missing')
-    const logs = await browser.logs()
+    const logs = await browser.log()
 
     expect(await browser.elementByCss('body').text()).toContain(
       'This page could not be found'
@@ -45,7 +45,7 @@ describe('parallel-route-not-found', () => {
 
   it('should not include any parallel route warnings for a deliberate notFound()', async () => {
     const browser = await next.browser('/has-both-slots/not-found-error')
-    const logs = await browser.logs()
+    const logs = await browser.log()
 
     expect(await browser.elementByCss('body').text()).toContain(
       'This page could not be found'
@@ -57,7 +57,7 @@ describe('parallel-route-not-found', () => {
 
   it('should render the page & slots if all parallel routes are found', async () => {
     const browser = await next.browser('/has-both-slots')
-    const logs = await browser.logs()
+    const logs = await browser.log()
 
     expect(await browser.elementByCss('body').text()).toContain(
       'Has Both Slots'
@@ -104,7 +104,7 @@ describe('parallel-route-not-found', () => {
   if (isNextDev) {
     it('should not log any warnings for a regular not found page', async () => {
       const browser = await next.browser('/this-page-doesnt-exist')
-      const logs = await browser.logs()
+      const logs = await browser.log()
       expect(await browser.elementByCss('body').text()).toContain(
         'This page could not be found'
       )

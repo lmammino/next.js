@@ -1116,7 +1116,7 @@ describe('Production Usage', () => {
     if (global.browserName !== 'chrome') return
     let browser
     browser = await webdriver(next.appPort, '/development-logs')
-    const browserLogs = await browser.logs()
+    const browserLogs = await browser.log()
     let found = false
     browserLogs.forEach((log) => {
       if (log.message.includes('Next.js auto-prefetches automatically')) {

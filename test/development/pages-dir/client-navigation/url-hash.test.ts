@@ -15,7 +15,7 @@ describe('Client navigation with URL hash', () => {
     describe('check hydration mis-match', () => {
       it('should not have hydration mis-match for hash link', async () => {
         const browser = await next.browser('/nav/hash-changes')
-        const browserLogs = await browser.logs()
+        const browserLogs = await browser.log()
         let found = false
         browserLogs.forEach((log) => {
           console.log('log.message', log.message)

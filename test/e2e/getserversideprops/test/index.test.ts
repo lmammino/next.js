@@ -693,7 +693,7 @@ const runTests = (isDev = false, isDeploy = false) => {
     })
 
     // there should not be any console errors
-    const logs = await browser.logs()
+    const logs = await browser.log()
     expect(logs.filter((log) => log.source === 'error').length).toBe(0)
   })
 

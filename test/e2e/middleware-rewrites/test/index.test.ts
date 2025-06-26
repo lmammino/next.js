@@ -844,7 +844,7 @@ describe('Middleware Rewrite', () => {
       const browser = await webdriver(next.url, '/dynamic-replace')
       const element = await browser.elementByCss('.title')
       expect(await element.text()).toEqual('Parts page')
-      const logs = await browser.logs()
+      const logs = await browser.log()
       expect(logs).toSatisfyAll(
         (log) => log.source === 'log' || log.source === 'info'
       )

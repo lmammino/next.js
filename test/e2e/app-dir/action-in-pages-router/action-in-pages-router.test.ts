@@ -12,7 +12,7 @@ describe('app-dir - action-in-pages-router', () => {
     await button.click()
 
     await retry(async () => {
-      const browserLogText = (await browser.logs())
+      const browserLogText = (await browser.log())
         .map((item) => item.message)
         .join('')
       // This is a fake server action, a simple function so it can still work

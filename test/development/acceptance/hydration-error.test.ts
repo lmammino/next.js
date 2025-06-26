@@ -35,7 +35,7 @@ describe('Error overlay for hydration errors in Pages router', () => {
       { pushErrorAsConsoleLog: true }
     )
     const { browser } = sandbox
-    const logs = await browser.logs()
+    const logs = await browser.log()
     expect(logs).toEqual(
       expect.arrayContaining([
         {
@@ -763,7 +763,7 @@ describe('Error overlay for hydration errors in Pages router', () => {
       ])
     )
     const { browser } = sandbox
-    const logs = await browser.logs()
+    const logs = await browser.log()
     const errors = logs
       .filter((x) => x.source === 'error')
       .map((x) => x.message)

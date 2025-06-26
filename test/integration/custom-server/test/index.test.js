@@ -183,7 +183,7 @@ describe.each([
         let browser
         browser = await webdriver(nextUrl, '/test-index-hmr')
         const text = await browser.elementByCss('#go-asset').text()
-        const logs = await browser.logs()
+        const logs = await browser.log()
         expect(text).toBe('Asset')
         expect(
           logs.some((log) =>

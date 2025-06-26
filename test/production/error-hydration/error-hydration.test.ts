@@ -8,7 +8,7 @@ describe('error-hydration', () => {
 
   it('should not log server-side errors', async () => {
     const browser = await next.browser('/with-error')
-    const messages = await browser.logs()
+    const messages = await browser.log()
 
     expect(messages).not.toEqual(
       expect.arrayContaining([
@@ -34,7 +34,7 @@ describe('error-hydration', () => {
   it('should log a message for client-side errors, including the full, custom error', async () => {
     const browser = await next.browser('/no-error')
     await browser.elementByCss('a').click()
-    const messages = await browser.logs()
+    const messages = await browser.log()
 
     retry(() => {
       expect(messages).toEqual(
