@@ -1,4 +1,3 @@
-const { outdent } = require('outdent')
 const { relative, basename, resolve, join, dirname } = require('path')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const glob = require('glob')
